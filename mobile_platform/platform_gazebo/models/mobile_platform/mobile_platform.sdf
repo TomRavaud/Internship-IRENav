@@ -1,0 +1,85 @@
+<sdf version='1.7'>
+  <model name='mobile_platform'>
+    <link name='ground_link'>
+      <inertial>
+        <pose>0 0 0 0 -0 0</pose>
+        <mass>1</mass>
+        <inertia>
+          <ixx>0.00166667</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.00166667</iyy>
+          <iyz>0</iyz>
+          <izz>0.00166667</izz>
+        </inertia>
+      </inertial>
+      <collision name='ground_link_collision'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.1 0.1 0.1</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name='ground_link_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.1 0.1 0.1</size>
+          </box>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='roll_revolute_joint' type='revolute'>
+      <pose relative_to='ground_link'>0 0 1 0 -0 0</pose>
+      <parent>ground_link</parent>
+      <child>board_link</child>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-1.57</lower>
+          <upper>1.57</upper>
+          <effort>1</effort>
+          <velocity>0.1</velocity>
+        </limit>
+        <dynamics>
+          <damping>0.1</damping>
+          <friction>0.1</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='board_link'>
+      <pose relative_to='roll_revolute_joint'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 -0 0</pose>
+        <mass>1</mass>
+        <inertia>
+          <ixx>0.0835416</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.0835416</iyy>
+          <iyz>0</iyz>
+          <izz>0.166667</izz>
+        </inertia>
+      </inertial>
+      <collision name='board_link_collision'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>1 1 0.05</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name='board_link_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>1 1 0.05</size>
+          </box>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+</sdf>

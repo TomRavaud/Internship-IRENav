@@ -1,0 +1,13 @@
+material PlatformPattern{
+    technique
+    {
+        pass
+        {
+            texture_unit
+            {
+                texture ../textures/pattern.png
+                scale 1 1
+            }
+        }   
+    }
+}

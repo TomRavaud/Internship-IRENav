@@ -1,0 +1,56 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="mobile_platform">
+
+    <!--Include files-->
+    <!-- <xacro:include filename="gazebo.xacro" /> -->
+    <xacro:include filename="inertias.xacro" />
+    <xacro:include filename="materials.xacro" />
+
+    <!--Define properties-->
+    <!-- <xacro:property name="width" value="1" /> -->
+
+    <!--Define macros-->
+    <xacro:macro name="box_link" params="name length width height material inertial:=true">
+        <link name="${name}_link">
+            <visual>
+                <geometry>
+                    <box size="${length} ${width} ${height}"/>
+                </geometry>
+                <material name="${material}"/>
+            </visual>
+            <collision>
+                <geometry>
+                    <box size="${length} ${width} ${height}"/>
+                </geometry>
+            </collision>
+
+            <!-- Physical properties -->
+            <xacro:if value="${inertial}">
+                <xacro:box_inertial x="${length}" y="${width}" z="${height}" mass="1"/>
+            </xacro:if>
+        </link>
+    </xacro:macro>
+
+    <xacro:macro name="revolute_joint" params="name parent_name child_name origin axis">
+        <joint name="${name}_revolute_joint" type="revolute">
+            <parent link="${parent_name}_link"/>
+            <child link="${child_name}_link"/>
+            <origin xyz="${origin}"/>
+            <axis xyz="${axis}"/>
+            <limit upper="1.57" lower="-1.57" effort="1" velocity="0.1"/>
+            <dynamics damping="0.1" friction="0.1"/>
+        </joint>
+    </xacro:macro>
+
+
+    <!-- Robot description -->
+    <xacro:box_link name="ground" length="0.1" width="0.1" height="0.1" material="green"/>
+    <xacro:box_link name="board" length="1" width="1" height="0.05" material="red"/>
+
+    <!-- <joint name="fixed" type="fixed">
+        <parent link="world"/>
+        <child link="ground"/>
+    </joint> -->
+    <xacro:revolute_joint name="roll" parent_name="ground" child_name="board" origin="0 0 1" axis="1 0 0"/>
+
+</robot>

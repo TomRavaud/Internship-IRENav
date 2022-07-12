@@ -1,0 +1,23 @@
+<!-- Simple world which includes a mobile platform -->
+
+<?xml version="1.0"?>
+  <sdf version="1.7">
+    <world name="mobile_platform">
+
+    <!--A ground plane-->
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+
+    <!--A global light source-->
+    <include>
+      <uri>model://sun</uri>
+    </include>
+
+    <!--Our mobile platform model-->
+    <include>
+      <uri>model://mobile_platform</uri>
+    </include>
+
+    </world>
+  </sdf>
