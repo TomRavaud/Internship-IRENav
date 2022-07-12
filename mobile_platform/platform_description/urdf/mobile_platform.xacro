@@ -2,14 +2,15 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="mobile_platform">
 
     <!--Include files-->
-    <!-- <xacro:include filename="gazebo.xacro" /> -->
+    <xacro:include filename="gazebo.xacro" />
     <xacro:include filename="inertias.xacro" />
     <xacro:include filename="materials.xacro" />
 
     <!--Define properties-->
     <!-- <xacro:property name="width" value="1" /> -->
 
-    <!--Define macros-->
+    <!--MACROS-->
+    <!-- Simple box link  -->
     <xacro:macro name="box_link" params="name length width height material inertial:=true">
         <link name="${name}_link">
             <visual>
@@ -31,8 +32,9 @@
         </link>
     </xacro:macro>
 
+    <!-- Simple revolute joint -->
     <xacro:macro name="revolute_joint" params="name parent_name child_name origin axis">
-        <joint name="${name}_revolute_joint" type="revolute">
+        <joint name="${name}_joint" type="revolute">
             <parent link="${parent_name}_link"/>
             <child link="${child_name}_link"/>
             <origin xyz="${origin}"/>
@@ -42,15 +44,39 @@
         </joint>
     </xacro:macro>
 
+    <!-- Transmission tags to actuate the platform -->
+    <!-- It links an actuator to a joint -->
+    <xacro:macro name="transmission" params="joint_name">
+        <transmission name="${joint_name}_transmission">
+            <type>transmission_interface/SimpleTransmission</type>
+
+            <joint name="${joint_name}_joint">
+                <!-- We can change the hardware interface to control position, velocity or effort -->
+                <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            </joint>
+
+            <actuator name="${joint_name}_actuator">
+                <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+        </transmission>
+    </xacro:macro>
+
 
     <!-- Robot description -->
+    <!-- Links -->
     <xacro:box_link name="ground" length="0.1" width="0.1" height="0.1" material="green"/>
     <xacro:box_link name="board" length="1" width="1" height="0.05" material="red"/>
+
+    <!-- Joints -->
 
     <!-- <joint name="fixed" type="fixed">
         <parent link="world"/>
         <child link="ground"/>
     </joint> -->
     <xacro:revolute_joint name="roll" parent_name="ground" child_name="board" origin="0 0 1" axis="1 0 0"/>
+
+    <!-- Transmissions -->
+    <xacro:transmission joint_name="roll"/>
 
 </robot>
