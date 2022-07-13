@@ -6,13 +6,13 @@
     <rosparam file="$(find platform_control)/config/joint_position_controller.yaml" command="load"/>
 
 
-
     <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
         <arg name="world_name" value="$(find platform_gazebo)/worlds/simple.world"/>
     </include>
 
-    <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find platform_description)/urdf/mobile_platform.xacro'"/>
+    <!-- I removed the - -inorder flag as it is a default in noetic -->
+    <param name="robot_description" command="$(find xacro)/xacro '$(find platform_description)/urdf/mobile_platform.xacro'"/>
 
     <!-- Spawn a platform into Gazebo -->
     <!-- <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-file $(find platform_description)/urdf/minimalbis.urdf -urdf -z 1 -model baxter" /> -->

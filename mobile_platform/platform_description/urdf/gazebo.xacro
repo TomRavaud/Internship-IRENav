@@ -1,11 +1,15 @@
 <?xml version="1.0"?>
 <robot>
 
-    <!-- Add texture to the board -->
-<!-- A verifier -->
-    <!-- <gazebo reference="board">
-        <material>../materials/scripts/PlatformPattern</material>
+    <!-- Add texture/colors to links -->
+    <gazebo reference="board_link">
+        <material>PlatformPattern</material>
+    </gazebo>
+
+    <!-- <gazebo reference="board_link">
+        <material>Gazebo/Red</material>
     </gazebo> -->
+
 
     <!-- ros_control plugin -->
     <gazebo>
@@ -13,4 +17,5 @@
             <robotNamespace>/mobile_platform</robotNamespace>
         </plugin>
     </gazebo>
+
 </robot>

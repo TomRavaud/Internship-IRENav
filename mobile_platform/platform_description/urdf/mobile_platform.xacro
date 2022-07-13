@@ -65,16 +65,21 @@
 
     <!-- Robot description -->
     <!-- Links -->
-    <xacro:box_link name="ground" length="0.1" width="0.1" height="0.1" material="green"/>
+    <link name="world_link"/>
+    <xacro:box_link name="base" length="0.1" width="0.1" height="0.1" material="green"/>
     <xacro:box_link name="board" length="1" width="1" height="0.05" material="red"/>
-
+ 
     <!-- Joints -->
-
     <!-- <joint name="fixed" type="fixed">
         <parent link="world"/>
         <child link="ground"/>
     </joint> -->
-    <xacro:revolute_joint name="roll" parent_name="ground" child_name="board" origin="0 0 1" axis="1 0 0"/>
+    <joint name="fixed" type="fixed">
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <parent link="world_link"/>
+        <child link="base_link"/>
+    </joint>
+    <xacro:revolute_joint name="roll" parent_name="base" child_name="board" origin="0 0 1" axis="1 0 0"/>
 
     <!-- Transmissions -->
     <xacro:transmission joint_name="roll"/>
