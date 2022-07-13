@@ -6,13 +6,24 @@ mobile_platform:
     publish_rate: 50  
 
   # Position Controller
-  revolute_joint_position_controller:
+  roll_joint_position_controller:
     type: position_controllers/JointPositionController
     joint: roll_joint
     # pid: {p: 100.0, i: 0.01, d: 10.0}
 
+  # FIXME:
+  pitch_joint_position_controller:
+    type: position_controllers/JointPositionController
+    joint: pitch_joint
+ 
   gazebo_ros_control/pid_gains:
     roll_joint:
+      p: 100.0
+      i: 0.01
+      d: 10.0
+
+    # FIXME:
+    pitch_joint:
       p: 100.0
       i: 0.01
       d: 10.0
