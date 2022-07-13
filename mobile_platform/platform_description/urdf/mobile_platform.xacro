@@ -79,5 +79,5 @@
 
     <!-- Transmissions -->
     <xacro:transmission joint_name="roll"/>
-
+<!-- blabla -->
 </robot>
