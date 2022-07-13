@@ -1,6 +1,16 @@
 <?xml version="1.0"?>
 <robot>
 
+    <!-- Disable gravity for the platform -->
+    <gazebo reference="board_link">
+        <gravity>0</gravity>
+    </gazebo>
+
+    <!-- <gazebo reference="base_link">
+        <gravity>0</gravity>
+    </gazebo> -->
+
+
     <!-- Add texture/colors to links -->
     <gazebo reference="board_link">
         <material>PlatformPattern</material>

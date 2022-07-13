@@ -40,7 +40,7 @@
             <origin xyz="${origin}"/>
             <axis xyz="${axis}"/>
             <limit upper="1.57" lower="-1.57" effort="1" velocity="0.1"/>
-            <dynamics damping="0.1" friction="0.1"/>
+            <!-- <dynamics damping="0.1" friction="0.1"/> -->
         </joint>
     </xacro:macro>
 
@@ -70,10 +70,6 @@
     <xacro:box_link name="board" length="1" width="1" height="0.05" material="red"/>
  
     <!-- Joints -->
-    <!-- <joint name="fixed" type="fixed">
-        <parent link="world"/>
-        <child link="ground"/>
-    </joint> -->
     <joint name="fixed" type="fixed">
         <origin xyz="0 0 0" rpy="0 0 0" />
         <parent link="world_link"/>

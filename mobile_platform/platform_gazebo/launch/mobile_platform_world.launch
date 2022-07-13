@@ -2,9 +2,8 @@
 <!-- Launch an empty world and include a world which contains the mobile platform -->
 <launch>
 
-    <!-- Est-ce utile ????? -->
+    <!-- Load joint controller configurations from YAML file to parameter server -->
     <rosparam file="$(find platform_control)/config/joint_position_controller.yaml" command="load"/>
-
 
     <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
