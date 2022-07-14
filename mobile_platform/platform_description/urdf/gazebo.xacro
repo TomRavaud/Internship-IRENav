@@ -5,16 +5,14 @@
     <gazebo reference="board_link">
         <gravity>0</gravity>
     </gazebo>
-
-    <gazebo reference="base2_link">
+    
+    <!-- <gazebo reference="base1_link">
         <gravity>0</gravity>
     </gazebo>
 
-
-    <!-- <gazebo reference="base_link">
+    <gazebo reference="base2_link">
         <gravity>0</gravity>
     </gazebo> -->
-
 
     <!-- Add texture/colors to links -->
     <gazebo reference="board_link">

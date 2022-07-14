@@ -17,6 +17,6 @@
     <!-- <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-file $(find platform_description)/urdf/minimalbis.urdf -urdf -z 1 -model baxter" /> -->
 
     <node name="platform_spawner" pkg="gazebo_ros" type="spawn_model" output="screen"
-          args="-urdf -param robot_description -model mobile_platform -x 0 -y 0 -z 0"/>
+          args="-urdf -param robot_description -model mobile_platform -x 0 -y 0 -z 1"/>
 
 </launch>
