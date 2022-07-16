@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<robot>
+    <link name="world"/>
+</robot>
