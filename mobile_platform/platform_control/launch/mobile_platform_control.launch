@@ -7,10 +7,7 @@
   <!-- Load the controllers -->
   <!-- FIXME: -->
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-    output="screen" ns="/mobile_platform" args="roll_joint_position_controller pitch_joint_position_controller joint_state_controller"/>
-
-  <!-- <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-    output="screen" ns="/mobile_platform" args="pitch_joint_position_controller joint_state_controller"/> -->
+    output="screen" ns="/mobile_platform" args="roll_joint_position_controller pitch_joint_position_controller yaw_joint_position_controller joint_state_controller"/>
 
   <!-- Convert joint states to TF transforms for rviz, etc -->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"

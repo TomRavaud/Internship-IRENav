@@ -65,32 +65,29 @@
 
     <!-- Robot description -->
     <!-- Links -->
-    <link name="world_link"/>
-    <xacro:box_link name="base" length="0.1" width="0.1" height="0.1" material="green"/>
+    <link name="world"/>
     <!-- FIXME: -->
-    <xacro:box_link name="board_sup" length="1" width="1" height="0.05" material="red"/>
-    <xacro:box_link name="board_inf" length="1" width="1" height="0.05" material="red"/>
+    <xacro:box_link name="base_yaw" length="0" width="0" height="0" material="red"/>
+    <xacro:box_link name="base_pitch" length="0" width="0" height="0" material="red"/>
+    <xacro:box_link name="base_roll" length="0" width="0" height="0" material="red"/>
+    <xacro:box_link name="board" length="1" width="1" height="0.05" material="green"/>
  
     <!-- Joints -->
-    <joint name="fixed" type="fixed">
-        <origin xyz="0 0 0" rpy="0 0 0" />
-        <parent link="world_link"/>
-        <child link="base_link"/>
-    </joint>
     <!-- FIXME: -->
-    <xacro:revolute_joint name="roll" parent_name="base" child_name="board_sup" origin="0 0 1" axis="1 0 0"/>
-    <xacro:revolute_joint name="pitch" parent_name="base" child_name="board_inf" origin="0 0 1" axis="0 1 0"/>
+    <joint name="fixed" type="fixed">
+        <parent link="world"/>
+        <child link="base_yaw_link"/>
+    </joint>
 
-    <gazebo>
-        <joint name="fixed_board" type="fixed">
-            <parent>board_sup_link</parent>
-            <child>board_inf_link</child>
-        </joint>
-    </gazebo>
+    <xacro:revolute_joint name="yaw" parent_name="base_yaw" child_name="base_pitch" origin="0 0 0" axis="0 0 1"/>
+    <xacro:revolute_joint name="pitch" parent_name="base_pitch" child_name="base_roll" origin="0 0 0" axis="0 1 0"/>
+    <xacro:revolute_joint name="roll" parent_name="base_roll" child_name="board" origin="0 0 0" axis="1 0 0"/>
 
+    <!-- FIXME: -->
     <!-- Transmissions -->
     <!-- FIXME: -->
     <xacro:transmission joint_name="roll"/>
     <xacro:transmission joint_name="pitch"/>
+    <xacro:transmission joint_name="yaw"/>
 
 </robot>

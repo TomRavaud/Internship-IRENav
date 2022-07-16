@@ -5,17 +5,15 @@
     <gazebo reference="board_sup_link">
         <gravity>0</gravity>
     </gazebo>
-
-    <gazebo reference="board_inf_link">
+    
+    <!-- <gazebo reference="base1_link">
         <gravity>0</gravity>
     </gazebo>
 
-
-    <!-- <gazebo reference="base_link">
+    <gazebo reference="base2_link">
         <gravity>0</gravity>
     </gazebo> -->
 
-    <!-- FIXME: -->
     <!-- Add texture/colors to links -->
     <gazebo reference="board_sup_link">
         <material>PlatformPattern</material>
