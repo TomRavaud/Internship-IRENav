@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="camera">
+
+    <!-- Files to include -->
+    <xacro:include filename="camera_gazebo.xacro"/>
+    <xacro:include filename="../../mobile_platform/platform_description/urdf/materials.xacro"/>
+    <!-- <xacro:include filename="world_link.xacro"/> -->
+
+    <!-- Define a property to indicate the size of the camera box -->
+    <xacro:property name="camera_size" value="0.1"/>
+
+
+    <!-- Camera description -->
+    <!-- Links -->
+    <!-- Define the world to fix the camera to it -->
+    <link name="world"/>
+
+    <!-- Camera link represented by a simple box -->
+    <link name="camera_link">
+        <visual>
+            <geometry>
+                <box size="${camera_size} ${camera_size} ${camera_size}"/>
+            </geometry>
+            <material name="red"/>
+        </visual>
+        <collision>
+            <geometry>
+                <box size="${camera_size} ${camera_size} ${camera_size}"/>
+            </geometry>
+        </collision>
+
+        <inertial>
+            <mass value="1e-5" />
+            <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+        </inertial>
+    </link>
+
+
+    <!-- Joints -->
+    <!-- Fixing the camera to the world -->
+    <joint name="fixed" type="fixed">
+        <parent link="world"/>
+        <child link="camera_link"/>
+    </joint>
+
+</robot>
