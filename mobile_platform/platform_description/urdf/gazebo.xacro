@@ -2,29 +2,25 @@
 <robot>
 
     <!-- Disable gravity for the platform -->
-    <gazebo reference="board_sup_link">
+    <gazebo reference="board_link">
         <gravity>0</gravity>
     </gazebo>
     
-    <!-- <gazebo reference="base1_link">
+    <!-- <gazebo reference="base_roll_link">
         <gravity>0</gravity>
     </gazebo>
 
-    <gazebo reference="base2_link">
+    <gazebo reference="base_pitch_link">
+        <gravity>0</gravity>
+    </gazebo> -->
+
+    <!-- <gazebo reference="base_yaw_link">
         <gravity>0</gravity>
     </gazebo> -->
 
     <!-- Add texture/colors to links -->
-    <gazebo reference="board_sup_link">
+    <gazebo reference="board_link">
         <material>PlatformPattern</material>
-    </gazebo>
-
-    <!-- <gazebo reference="board_sup_link">
-        <material>Gazebo/Red</material>
-    </gazebo> -->
-
-    <gazebo reference="board_inf_link">
-        <material>Gazebo/Green</material>
     </gazebo>
 
     <!-- ros_control model plugin -->

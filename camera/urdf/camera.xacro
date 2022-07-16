@@ -4,7 +4,6 @@
     <!-- Files to include -->
     <xacro:include filename="camera_gazebo.xacro"/>
     <xacro:include filename="../../mobile_platform/platform_description/urdf/materials.xacro"/>
-    <!-- <xacro:include filename="world_link.xacro"/> -->
 
     <!-- Define a property to indicate the size of the camera box -->
     <xacro:property name="camera_size" value="0.1"/>
