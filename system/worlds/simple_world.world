@@ -1,0 +1,18 @@
+<!-- Simple world -->
+
+<?xml version="1.0"?>
+  <sdf version="1.7">
+    <world name="simple_world">
+
+    <!--A ground plane-->
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+
+    <!--A global light source-->
+    <include>
+      <uri>model://sun</uri>
+    </include>
+
+    </world>
+  </sdf>
