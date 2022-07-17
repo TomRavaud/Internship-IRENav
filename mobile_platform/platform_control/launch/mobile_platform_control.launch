@@ -1,19 +1,9 @@
-<?xml version="1.0" ?>
+<?xml version="1.0"?>
 <launch>
 
-  <!-- Load joint controller configurations from YAML file to parameter server -->
-  <!-- <rosparam file="$(find platform_control)/config/joint_position_controller.yaml" command="load"/> -->
-
-  <!-- Load the controllers -->
-  <!-- FIXME: -->
-  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-    output="screen" ns="/mobile_platform" args="roll_joint_position_controller pitch_joint_position_controller yaw_joint_position_controller joint_state_controller"/>
-
-  <!-- Convert joint states to TF transforms for rviz, etc -->
-  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
-    respawn="false" output="screen">
-    <!-- Remap the topic's name to avoid having multiple topics with the same name -->
-    <remap from="/joint_states" to="/mobile_platform/joint_states" />
-  </node>
+    <!-- Load the controllers -->
+    <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+        output="screen" args="roll_joint_position_controller pitch_joint_position_controller 
+        yaw_joint_position_controller joint_state_controller"/>
 
 </launch>

@@ -1,4 +1,3 @@
-# Robot namespace
 mobile_platform:
   # Publish all joint states
   joint_state_controller:
@@ -18,7 +17,7 @@ mobile_platform:
   yaw_joint_position_controller:
     type: position_controllers/JointPositionController
     joint: yaw_joint
- 
+
   gazebo_ros_control/pid_gains:
     roll_joint:
       p: 100.0

@@ -7,11 +7,6 @@
     <node name="spawner" pkg="gazebo_ros" type="spawn_model" output="screen"
         args="-urdf -param robot_description -model mobile_platform $(arg init_pose)"/>
     
-    <!-- Load the controllers -->
-    <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-        output="screen" args="roll_joint_position_controller pitch_joint_position_controller 
-        yaw_joint_position_controller joint_state_controller"/>
-
     <!-- Convert joint states to TF transforms for rviz, etc -->
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
         respawn="false" output="screen">
