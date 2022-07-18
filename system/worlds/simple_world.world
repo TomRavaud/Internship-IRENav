@@ -14,5 +14,10 @@
       <uri>model://sun</uri>
     </include>
 
+    <!-- <scene>
+      <ambient>0.0 0.0 0.0 1.0</ambient>
+      <shadows>false</shadows>
+    </scene> -->
+
     </world>
   </sdf>

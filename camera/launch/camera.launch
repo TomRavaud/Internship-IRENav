@@ -5,12 +5,12 @@
 
     <!-- Spawn a camera into Gazebo -->
     <node name="spawner" pkg="gazebo_ros" type="spawn_model" output="screen"
-        args="-urdf -param robot_description -model camera $(arg init_pose)"/>
+        args="-urdf -param camera1/robot_description -model camera $(arg init_pose)"/>
 
     <!-- Convert joint states to TF transforms for rviz, etc -->
-    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
+    <node ns="camera1" name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
         respawn="false" output="screen">
-        <remap from="/joint_states" to="/camera1/joint_states" />
+        <!-- <remap from="/joint_states" to="/camera1/joint_states" /> -->
     </node>
 
 </launch>

@@ -6,13 +6,13 @@
         <gravity>0</gravity>
     </gazebo>
     
-    <!-- <gazebo reference="base_roll_link">
+    <gazebo reference="base_roll_link">
         <gravity>0</gravity>
     </gazebo>
 
     <gazebo reference="base_pitch_link">
         <gravity>0</gravity>
-    </gazebo> -->
+    </gazebo>
 
     <!-- <gazebo reference="base_yaw_link">
         <gravity>0</gravity>

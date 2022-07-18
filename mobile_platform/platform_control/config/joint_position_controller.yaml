@@ -20,17 +20,17 @@ mobile_platform:
 
   gazebo_ros_control/pid_gains:
     roll_joint:
-      p: 100.0
+      p: 400.0
       i: 0.01
       d: 10.0
 
     # FIXME:
     pitch_joint:
-      p: 100.0
+      p: 400.0
       i: 0.01
       d: 10.0
 
     yaw_joint:
-      p: 100.0
+      p: 400.0
       i: 0.01
       d: 10.0

@@ -1,6 +1,12 @@
 <?xml version="1.0"?>
 <robot>
 
+    <!-- Add color to the camera box -->
+    <gazebo reference="camera_link">
+        <material>Gazebo/Red</material>
+    </gazebo>
+
+
     <!-- Add a camera into Gazebo and a plugin to communicate its frames to ROS -->
     <gazebo reference="camera_link">
         <sensor type="camera" name="camera1">

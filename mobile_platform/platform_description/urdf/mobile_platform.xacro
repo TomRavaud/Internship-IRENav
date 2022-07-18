@@ -27,7 +27,7 @@
 
             <!-- Physical properties -->
             <xacro:if value="${inertial}">
-                <xacro:box_inertial x="${length}" y="${width}" z="${height}" mass="1"/>
+                <xacro:box_inertial x="${length}" y="${width}" z="${height}" mass="0.1"/>
             </xacro:if>
         </link>
     </xacro:macro>
@@ -39,7 +39,7 @@
             <child link="${child_name}_link"/>
             <origin xyz="${origin}"/>
             <axis xyz="${axis}"/>
-            <limit upper="1.57" lower="-1.57" effort="1" velocity="0.1"/>
+            <limit upper="1.57" lower="-1.57" effort="1" velocity="10"/>
             <!-- <dynamics damping="0.1" friction="0.1"/> -->
         </joint>
     </xacro:macro>

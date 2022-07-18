@@ -1,6 +1,0 @@
-{
-    "python.autoComplete.extraPaths": [
-        "/media/tom/Shared/Stage-EN-2022/quadcopter_landing_ws/devel/lib/python3/dist-packages",
-        "/opt/ros/noetic/lib/python3/dist-packages"
-    ]
-}

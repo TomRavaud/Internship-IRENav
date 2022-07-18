@@ -25,11 +25,11 @@
     </group>
 
     <!-- CAMERA -->
-    <param name="robot_description" command="$(find xacro)/xacro '$(find camera)/urdf/camera.xacro'"/>
+    <param name="camera1/robot_description" command="$(find xacro)/xacro '$(find camera)/urdf/camera.xacro'"/>
     <param name="tf_prefix" value="camera1" />
 
     <include file="$(find camera)/launch/camera.launch" >
-        <arg name="init_pose" value="-x 0 -y 0 -z 2 -R 0 -P $(arg pi/2) -Y 0" />
+        <arg name="init_pose" value="-x 0 -y 0 -z 2.5 -R 0 -P $(arg pi/2) -Y 0" />
     </include>
 
 </launch>
