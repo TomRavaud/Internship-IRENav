@@ -9,7 +9,6 @@ mobile_platform:
     type: position_controllers/JointPositionController
     joint: roll_joint
 
-  # FIXME:
   pitch_joint_position_controller:
     type: position_controllers/JointPositionController
     joint: pitch_joint
@@ -24,7 +23,6 @@ mobile_platform:
       i: 0.01
       d: 10.0
 
-    # FIXME:
     pitch_joint:
       p: 400.0
       i: 0.01
