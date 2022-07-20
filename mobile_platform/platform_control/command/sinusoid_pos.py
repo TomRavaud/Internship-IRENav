@@ -17,6 +17,7 @@ pub_roll = rospy.Publisher("/mobile_platform/roll_joint_position_controller/comm
 publishing_rate = 100
 rate = rospy.Rate(publishing_rate)
 
+# TODO: Define a function to compute the command
 # Instantiate a Float64 object to store the position value that will be sent
 # to the platform
 position = Float64()

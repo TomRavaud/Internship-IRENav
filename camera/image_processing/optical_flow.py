@@ -1,84 +1,92 @@
 #!/usr/bin/env python3
 
+# ROS - Python librairies
 import rospy
 
 # cv_bridge is used to convert ROS Image message type into OpenCV images
 import cv_bridge
 
+from sensor_msgs.msg import Image
+
+
+# Python librairies
 import cv2
 import numpy as np
 
-from sensor_msgs.msg import Image
+
+# My modules
+import features_detection as fd
+import lucas_kanade as lk
 
 
 class OpticalFlow:
     def __init__(self):
+        # Set a boolean attribute to identify the first frame
+        self.is_first_image = True
+        
+        # Declare some attributes which will be used to compute optical flow
+        self.old_image = None
+        self.old_points = None
+        
         # Initialize the bridge between ROS and OpenCV images
         self.bridge = cv_bridge.CvBridge()
         
+        # FIXME: Do I have to open a window here ?
         # Open a window in which camera images will be displayed
-        cv2.namedWindow("Preview", 1)
+        # cv2.namedWindow("Preview", 1)
         
-        # This node subscribes to the camera images topic
+        # Initialize the subscriber to the camera images topic
         self.sub = rospy.Subscriber("camera1/image_raw", Image, self.callback)
+        
     
-    def compute_harris_score(self, image):
-        # Convert the image to grayscale 
-        gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY) 
-        
-        # Intensities should be float32 type 
-        gray = np.float32(gray)
-        
-        # Compute the Harris score of each pixel 
-        # cornerHarris(img, blockSize, ksize, k)
-        harris_score = cv2.cornerHarris(gray, 2, 3, 0.04)
-        
-        return harris_score
-    
-    def corners_detection(self, harris_score, threshold):
-        # Identify corners in the image given a threshold
-        corners = np.flip(np.column_stack(np.where(harris_score > threshold * harris_score.max())))
-        
-        return corners 
-    
-    def show_corners(self, image, corners): 
-        # Draw a red circle on the image for each corner
-        for corner in corners:
-            cv2.circle(image, tuple(corner), radius=3, 
-                       color=(0, 0, 255), thickness=-1)
-            
-        # Display the image in the window
-        cv2.imshow("Preview", image)
-        
-        # Wait for 3 ms (for a key press) before automatically destroying
-        # the current window
-        cv2.waitKey(3)
-        
     # TODO: Callback function, docstring 
     def callback(self, msg):
+        
         # Convert the ROS Image into the OpenCV format
         image = self.bridge.imgmsg_to_cv2(msg, desired_encoding="bgr8")
-        
-        # Compute the harris score map
-        harris_score = self.compute_harris_score(image)
-        
-        # Set a threshold to avoid having too many corners,
-        # its value depends on the image
-        threshold = 0.01
-        
-        # Extract corners coordinates
-        corners = self.corners_detection(harris_score, threshold)
-        
-        # Display the image and the detected corners
-        self.show_corners(image, corners)
+
+        # Find the Harris' corners on the first frame
+        if self.is_first_image:
+            # Compute the Harris' score map
+            harris_score = fd.compute_harris_score(image)
+            
+            # Set a threshold to avoid having too many corners,
+            # its value depends on the image
+            threshold = 0.1
+            
+            # Extract corners coordinates
+            points = fd.corners_detection(harris_score, threshold)
+            
+            self.is_first_image = False
+
+        # Compute the optical flow from the second frame
+        else:
+            # The optical flow might have not been found for some points
+            # we need to update old_points to compute the difference between
+            # the current points and these
+            points, self.old_points = lk.points_next_position_lk(image,
+                                                              self.old_image,
+                                                              self.old_points)
+
+            #TODO: Compute optical flow between the current points and old ones
+
+        # Display the image and key-points
+        fd.show_points(image, points)
+
+        # Update old image and points
+        self.old_image = image
+        self.old_points = points
 
 
+# Main program
+# The "__main__" flag acts as a shield to avoid these lines to be executed if
+# this file is imported in another one
+if __name__ == "__main__":
+    # Declare the node
+    rospy.init_node("optical_flow")
 
-# Declare the node
-rospy.init_node("optical_flow")
+    # Instantiate an object
+    optical_flow = OpticalFlow()
 
-# Instantiate an object
-optical_flow = OpticalFlow()
-
-# Run the node until Ctrl + C is pressed
-rospy.spin()
+    # Run the node until Ctrl + C is pressed
+    rospy.spin()
