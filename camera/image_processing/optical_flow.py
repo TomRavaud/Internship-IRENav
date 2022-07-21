@@ -27,6 +27,7 @@ class OpticalFlow:
         # Declare some attributes which will be used to compute optical flow
         self.old_image = None
         self.old_points = None
+        self.old_time = None
         
         # Initialize the bridge between ROS and OpenCV images
         self.bridge = cv_bridge.CvBridge()
@@ -44,6 +45,9 @@ class OpticalFlow:
         
         # Convert the ROS Image into the OpenCV format
         image = self.bridge.imgmsg_to_cv2(msg, desired_encoding="bgr8")
+        
+        # Get the time the message was published
+        time = msg.header.stamp
 
         # Find the Harris' corners on the first frame
         if self.is_first_image:
@@ -68,7 +72,11 @@ class OpticalFlow:
                                                               self.old_image,
                                                               self.old_points)
 
-            #TODO: Compute optical flow between the current points and old ones
+            # Get the duration between two published messages
+            dt = (time - self.old_time).to_sec()
+            
+            # Compute optical flow between the current points and old ones
+            optical_flow = lk.sparse_optical_flow(self.old_points, points, dt)
 
         # Display the image and key-points
         fd.show_points(image, points)
@@ -76,6 +84,9 @@ class OpticalFlow:
         # Update old image and points
         self.old_image = image
         self.old_points = points
+        
+        # Update the time the last message was published
+        self.old_time = time
 
 
 # Main program
