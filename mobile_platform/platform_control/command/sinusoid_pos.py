@@ -24,7 +24,7 @@ position = Float64()
 
 # Set the amplitude (radians) and the frequency (Hz) of the sinusoid
 amplitude = 20*np.pi/180
-frequency = 0.5
+frequency = 0.1
 
 # time = rospy.get_time()
 

@@ -2,7 +2,10 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="camera">
 
     <!-- Files to include -->
+    <!-- Simple camera -->
     <xacro:include filename="camera_gazebo.xacro"/>
+    <!-- Kinect-like depth camera -->
+    <!-- <xacro:include filename="depth_camera_gazebo.xacro"/> -->
     <xacro:include filename="../../mobile_platform/platform_description/urdf/materials.xacro"/>
 
     <!-- Define a property to indicate the size of the camera box -->

@@ -6,7 +6,7 @@ import rospy
 # cv_bridge is used to convert ROS Image message type into OpenCV images
 import cv_bridge
 
-from sensor_msgs.msg import Image
+from sensor_msgs.msg import Image, CameraInfo
 
 
 # Python librairies
@@ -17,10 +17,12 @@ import numpy as np
 # My modules
 import features_detection as fd
 import lucas_kanade as lk
+import motion_estimation as me
 
 
 class OpticalFlow:
     def __init__(self):
+        
         # Set a boolean attribute to identify the first frame
         self.is_first_image = True
         
@@ -36,18 +38,29 @@ class OpticalFlow:
         # Open a window in which camera images will be displayed
         # cv2.namedWindow("Preview", 1)
         
+        # Extract only one message from the camera_info topic as the camera parameters
+        # do not change
+        camera_info = rospy.wait_for_message("camera1/camera_info", CameraInfo)
+        
+        # Get the internal calibration matrix of the camera
+        K = camera_info.K
+        
+        # Get the focal length and the origin's offsets 
+        self.f = K[0]
+        self.mu0 = K[2]
+        self.nu0 = K[5]
+
         # Initialize the subscriber to the camera images topic
-        self.sub = rospy.Subscriber("camera1/image_raw", Image, self.callback)
-        
-    
+        self.sub_image = rospy.Subscriber("camera1/image_raw", Image, self.callback_image)
+
     # TODO: Callback function, docstring 
-    def callback(self, msg):
-        
-        # Convert the ROS Image into the OpenCV format
-        image = self.bridge.imgmsg_to_cv2(msg, desired_encoding="bgr8")
+    def callback_image(self, msg):
         
         # Get the time the message was published
         time = msg.header.stamp
+        
+        # Convert the ROS Image into the OpenCV format
+        image = self.bridge.imgmsg_to_cv2(msg, desired_encoding="bgr8")
 
         # Find the Harris' corners on the first frame
         if self.is_first_image:
@@ -56,7 +69,7 @@ class OpticalFlow:
             
             # Set a threshold to avoid having too many corners,
             # its value depends on the image
-            threshold = 0.1
+            threshold = 0.7
             
             # Extract corners coordinates
             points = fd.corners_detection(harris_score, threshold)
@@ -77,6 +90,9 @@ class OpticalFlow:
             
             # Compute optical flow between the current points and old ones
             optical_flow = lk.sparse_optical_flow(self.old_points, points, dt)
+            
+            # Estimate the rotational relative velocities
+            rot_velocities = me.velocity_estimation(optical_flow, self.old_points, self.f, self.mu0, self.nu0)
 
         # Display the image and key-points
         fd.show_points(image, points)
