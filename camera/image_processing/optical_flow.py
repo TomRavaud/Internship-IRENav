@@ -18,6 +18,7 @@ import numpy as np
 import features_detection as fd
 import lucas_kanade as lk
 import motion_estimation as me
+import drawing as dw
 
 
 class OpticalFlow:
@@ -42,13 +43,15 @@ class OpticalFlow:
         # do not change
         camera_info = rospy.wait_for_message("camera1/camera_info", CameraInfo)
         
+        # FIXME: Keeping K or f, mu0 and nu0 ??
         # Get the internal calibration matrix of the camera
-        K = camera_info.K
+        self.K = camera_info.K
+        self.K = np.reshape(np.array(self.K), (3, 3))
         
         # Get the focal length and the origin's offsets 
-        self.f = K[0]
-        self.mu0 = K[2]
-        self.nu0 = K[5]
+        # self.f = K[0]
+        # self.mu0 = K[2]
+        # self.nu0 = K[5]
 
         # Initialize the subscriber to the camera images topic
         self.sub_image = rospy.Subscriber("camera1/image_raw", Image, self.callback_image)
@@ -92,17 +95,21 @@ class OpticalFlow:
             optical_flow = lk.sparse_optical_flow(self.old_points, points, dt)
             
             # Estimate the rotational relative velocities
-            rot_velocities = me.velocity_estimation(optical_flow, self.old_points, self.f, self.mu0, self.nu0)
-
-        # Display the image and key-points
-        fd.show_points(image, points)
-
+            # rot_velocities = me.velocity_estimation(optical_flow, self.old_points, self.f, self.mu0, self.nu0)
+            
         # Update old image and points
         self.old_image = image
         self.old_points = points
         
         # Update the time the last message was published
         self.old_time = time
+        
+        # Draw the 3D coordinates axis of the platform
+        image = dw.draw_axes(image, np.array([0., 0., 0.]), np.array([0., 0., 1.5]), self.K)
+        # Draw points on the image
+        image = dw.draw_points(image, points)
+        # Display the image
+        dw.show_image(image)
 
 
 # Main program
