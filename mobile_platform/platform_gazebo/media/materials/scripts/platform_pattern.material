@@ -5,7 +5,7 @@ material PlatformPattern{
         {
             texture_unit
             {
-                texture ../textures/texture_stone.jpg
+                texture ../textures/pattern_chessboard.png
                 scale 1 1
             }
         }   

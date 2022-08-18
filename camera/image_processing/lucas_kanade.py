@@ -40,5 +40,6 @@ def points_next_position_lk(image, old_image, old_points):
 
 def sparse_optical_flow(old_points, points, time_difference):
     # Compute the optical flow, ie the velocity of image points
-    optical_flow = (points - old_points)/time_difference
+    optical_flow = points - old_points
+    # optical_flow = (points - old_points)/time_difference
     return optical_flow
