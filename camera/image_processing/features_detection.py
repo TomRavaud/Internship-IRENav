@@ -1,12 +1,18 @@
-# TODO: Change to OOP
-
 import numpy as np
 import cv2
 
 
 def compute_harris_score(image):
+    """Compute the Harris score map from an image
+
+    Args:
+        image (cv::Mat): an OpenCV image
+
+    Returns:
+        ndarray (image size): the score map of the image
+    """
     # Convert the image to grayscale 
-    gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY) 
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) 
     
     # Intensities should be float32 type 
     gray = np.float32(gray)
@@ -18,22 +24,18 @@ def compute_harris_score(image):
     return harris_score
 
 def corners_detection(harris_score, threshold):
+    """Detect corners in a score map given a threshold
+
+    Args:
+        harris_score (ndarray): an image score map
+        threshold (float): a threshold used to identify corners
+        (the larger it is, the fewer points there will be)
+
+    Returns:
+        ndarray (N, 2): the array of corners' coordinates
+    """
     # Identify corners in the image given a threshold
     corners = np.flip(np.column_stack(
         np.where(harris_score > threshold * harris_score.max())))
     
     return corners 
-
-# TODO: Maybe to modify, differentiate displaying the images and the corners
-def show_points(image, points): 
-    # Draw a red circle on the image for each corner
-    for point in points:
-        cv2.circle(image, tuple(point), radius=3, 
-                    color=(0, 0, 255), thickness=-1)
-        
-    # Display the image in the window
-    cv2.imshow("Preview", image)
-    
-    # Wait for 3 ms (for a key press) before automatically destroying
-    # the current window
-    cv2.waitKey(3)

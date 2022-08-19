@@ -1,112 +1,187 @@
+#!/usr/bin/env python3
+
+# ROS - Python librairies
+import rospy
+
+# cv_bridge is used to convert ROS Image message type into OpenCV images
+import cv_bridge
+
+# Import useful ROS types
+from sensor_msgs.msg import Image, CameraInfo 
+
+# Python librairies
+import cv2
 import numpy as np
 
-def compute_infinitesimal_rigid_motion(optical_flow, old_points, K, depth_image):
-    
-    # Number of points for which the optical flow has been successfully
-    # computed
-    nb_points = np.shape(old_points)[0]
-    
-    # Check we have enough points (3) to estimate the 6 velocities
-    assert nb_points >= 3, "Need to have at least 3 detected points"
-    
-    # Change the image's origin from the top left corner to the center
-    mu0, nu0 = K[0, 2], K[1, 2] # Get the coordinates of the image's origin
-    # points = np.copy(old_points) - np.array([mu0, nu0])
 
-    # Get the key-points' coordinates
-    points = np.copy(old_points)
-    mu, nu = points[:, 0], points[:, 1]
-    
-    zc = depth_image[tuple(mu.astype(int)), tuple(nu.astype(int))]
-    # print(zc)
-    # print(np.shape(mu), np.shape(nu), np.shape(1/zc))
-    
-    mu -= mu0
-    nu -= nu0
+# My modules
+import features_detection as fd
+import optical_flow as of
+# import velocity as vel
+import infinitesimal_motion as im
+import switch_frame as sf
+import drawing as dw
 
-    # dtheta = np.array([0., 0., 0.])
-    
-    #FIXME: Introduce zc !
-    # Compute the lines of the matrix M obtained by derivation of the ideal optical flow
-    f = K[0, 0] # Get the focal length of the camera
-    M0 = np.stack((f/zc, np.zeros_like(mu), -mu/zc, -mu*nu/f, mu**2/f + f, -nu), axis=1)  # Even lines
-    M1 = np.stack((np.zeros_like(mu), f/zc, -nu/zc, -nu**2/f - f, mu*nu/f, mu), axis=1)  # Odd lines
 
-    # Arrange these lines to form the matrix M
-    M = np.empty((2*nb_points, 6))
-    M[0::2, :] = M0
-    M[1::2, :] = M1
-    
-    # Reshape the optical flow vector
-    # print(np.concatenate((old_points, optical_flow), axis=1))
-    optical_flow = optical_flow.reshape(2*nb_points,)
-    
-    # Estimate the motion by solving the linear least squares problem
-    # (it computes the Moore Penrose pseudo inverse of M using its SVD)
-    dmotion = np.linalg.lstsq(M, optical_flow, rcond=None)[0]
-    
-    # print(dmotion)
+class PoseEstimation:
+    def __init__(self):
+        """Constructor of the class
+        """
+        # Set a boolean attribute to identify the first frame
+        self.is_first_image = True
+        
+        # Declare some attributes which will be used to compute optical flow
+        self.old_image = None
+        self.old_points = None
+        self.old_time = None
+        
+        # Initialize the set of 4 points which will be used to draw the axes
+        # These values are expressed in the platform coordinate system
+        self.axes_points = np.array([[0.3, 0, 0], [0, 0.3, 0],
+                                     [0, 0, 0.3], [0, 0, 0]], dtype="float32")
+        
+        # Initialize the rotation and the translation
+        # These values correspond to the transformation between the camera
+        # frame and the initial platform frame, then they will represent the
+        # transformation between two successive platform poses in the camera
+        # frame
+        self.T = np.array([0., 0., 1.475])
+        self.R = np.array([[0, 1, 0],
+                           [1, 0, 0],
+                           [0, 0, -1]])
+        
+        # Declare a depth image attribute
+        self.depth_image = None
+        
+        # Initialize the bridge between ROS and OpenCV images
+        self.bridge = cv_bridge.CvBridge()
+        
+        # Extract only one message from the camera_info topic as the camera
+        # parameters do not change
+        camera_info = rospy.wait_for_message("camera1/camera_info", CameraInfo)
+        
+        # Get the internal calibration matrix of the camera and reshape it to
+        # more conventional form
+        self.K = camera_info.K
+        self.K = np.reshape(np.array(self.K), (3, 3))
+        
+        # Initialize the subscriber to the camera images topic
+        self.sub_image = rospy.Subscriber("camera1/image_raw", Image,
+                                          self.callback_image)
+        # Initialize the subscriber to the depth image topic
+        self.sub_depth = rospy.Subscriber("camera1/image_raw_depth", Image,
+                                          self.callback_depth)
 
-    return dmotion
+    def callback_image(self, msg):
+        """Function called each time a new ros Image message is received on
+        the camera1/image_raw topic
 
-def apply_infinitesimal_rigid_motion(points, dtheta, dT):
-    # Compute the infinitesimal rotation matrix from the angles
-    dthetax, dthetay, dthetaz = dtheta
-    
-    dR = np.array([[1, -dthetaz, dthetay],
-                   [dthetaz, 1, -dthetax],
-                   [-dthetay, dthetax, 1]])
-    
-    # Number of points we want to move
-    n = np.shape(points)[0]
-    homogeneous_points = np.ones((n, 4))
-    homogeneous_points[:, :-1] = points
-    
-    # Concatenate the rotation matrix and the translation vector
-    homogeneous_matrix = np.zeros((3, 4))
-    homogeneous_matrix[:, :-1], homogeneous_matrix[:, -1] = dR, dT
-    
-    # Compute points coordinates after the rigid motion
-    new_points = np.dot(homogeneous_points, np.transpose(homogeneous_matrix))
-    
-    return new_points
+        Args:
+            msg (sensor_msgs/Image): a ROS image sent by the camera
+        """
+        # Get the time the message was published
+        time = msg.header.stamp
+        
+        # Convert the ROS Image into the OpenCV format
+        image = self.bridge.imgmsg_to_cv2(msg, desired_encoding="bgr8")
 
-def apply_rigid_motion(points, R, T):
-    
-    # Number of points we want to move
-    nb_points = np.shape(points)[0]
-    
-    # Use homogenous coordinates
-    homogeneous_points = np.ones((nb_points, 4))
-    homogeneous_points[:, :-1] = points
-    
-    # Concatenate the rotation matrix and the translation vector
-    homogeneous_matrix = np.zeros((3, 4))
-    homogeneous_matrix[:, :-1], homogeneous_matrix[:, -1] = R, T
-    
-    # Compute points coordinates after the rigid motion
-    new_points = np.dot(homogeneous_points, np.transpose(homogeneous_matrix))
-    
-    return new_points
+        # Find the Harris' corners on the first frame
+        if self.is_first_image:
+            # Compute the Harris' score map
+            harris_score = fd.compute_harris_score(image)
+            
+            # Set a threshold to avoid having too many corners,
+            # its value depends on the image
+            threshold = 0.7
+            
+            # Extract corners coordinates
+            points = fd.corners_detection(harris_score, threshold)
+            
+            self.is_first_image = False
 
-def infinitesimal_rotation_matrix(dtheta):
-     # Compute the infinitesimal rotation matrix from the angles
-    dthetax, dthetay, dthetaz = dtheta
-    
-    dR = np.array([[1, -dthetaz, dthetay],
-                   [dthetaz, 1, -dthetax],
-                   [-dthetay, dthetax, 1]])
-    
-    return dR
+        # Compute the optical flow from the second frame and estimate the
+        # platform pose in the camera coordinate system
+        else:
+            # The optical flow might have not been found for some points
+            # we need to update old_points to compute the difference between
+            # the current points and these
+            points, self.old_points = of.points_next_position_lk(image,
+                                                              self.old_image,
+                                                              self.old_points)
 
-def camera_frame_to_image(points, K):
-    # Project the points onto the image plan, the obtained coordinates are
-    # defined up to a scaling factor
-    points_projection = np.dot(points, np.transpose(K))
-    print(points_projection)
-    
-    # Get the points' coordinates in the image frame dividing by the third coordinate
-    points_projection = points_projection[:, :2]/points_projection[:, 2][:, np.newaxis]
-    
-    return points_projection
- 
+            # Get the duration between two published messages
+            dt = (time - self.old_time).to_sec()
+            
+            # Compute the displacement of the corners between the 2 images
+            points_displacement = of.sparse_displacement(self.old_points,
+                                                         points)
+            
+            # Compute the optical flow at the corners
+            # optical_flow = of.sparse_optical_flow(self.old_points, points, dt)
+            
+            # Estimate the rotational relative velocities
+            # rot_velocities = vel.velocity_estimation(optical_flow,
+            #                                          self.old_points, self.f,
+            #                                          self.mu0, self.nu0)
+            
+            # Estimate the infinitesimal motion of the platform between two
+            # successive images
+            dmotion = im.compute_infinitesimal_rigid_motion(
+                points_displacement, self.old_points, self.K, self.depth_image)
+            
+            # Extract infinitesimal rotation and translation
+            self.T = dmotion[:3]
+            theta = dmotion[-3:]
+
+            # Compute the infinitesimal rotation matrix from the angles
+            self.R = im.infinitesimal_rotation_matrix(theta)
+            
+        # Update old image and points
+        self.old_image = image
+        self.old_points = points
+        
+        # Update the time the last message was published
+        self.old_time = time
+
+        # Update axes points coordinates
+        self.axes_points = sf.apply_rigid_motion(self.axes_points, self.R,
+                                                 self.T)
+        
+        # Compute those points coordinates in the image plan
+        axes_points_image = sf.camera_frame_to_image(self.axes_points, self.K)
+        
+        # Draw the platform axes on the image
+        image = dw.draw_axes(image, axes_points_image)
+        
+        # Draw points on the image
+        image = dw.draw_points(image, points)
+        
+        # Display the image
+        dw.show_image(image)
+        
+    def callback_depth(self, msg):
+        """Function called each time a new ROS Image is received on
+        the camera1/image_raw_depth topic
+
+        Args:
+            msg (sensor_msgs/Image): a ROS depth image sent by the camera
+        """
+        # Convert the ROS Image into the OpenCV format
+        # They are encoded as 32-bit float (32UC1) and each pixel is a depth
+        # along the camera Z axis in meters
+        self.depth_image = self.bridge.imgmsg_to_cv2(
+            msg, desired_encoding="passthrough")
+
+        
+# Main program
+# The "__main__" flag acts as a shield to avoid these lines to be executed if
+# this file is imported in another one
+if __name__ == "__main__":
+    # Declare the node
+    rospy.init_node("pose_estimation")
+
+    # Instantiate an object
+    pose_estimation = PoseEstimation()
+
+    # Run the node until Ctrl + C is pressed
+    rospy.spin()
