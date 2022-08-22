@@ -11,7 +11,6 @@
     <!-- Define a property to indicate the size of the camera box -->
     <xacro:property name="camera_size" value="0.1"/>
 
-
     <!-- Camera description -->
     <!-- Links -->
     <!-- Define the world to fix the camera to it -->
@@ -43,6 +42,7 @@
     <joint name="fixed" type="fixed">
         <parent link="world"/>
         <child link="camera_link"/>
+        <origin xyz ="0 0 2.5" rpy="0 1.57079632679 0"/>
     </joint>
 
 </robot>

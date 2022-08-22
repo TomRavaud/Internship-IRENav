@@ -13,4 +13,10 @@
         <!-- <remap from="/joint_states" to="/camera1/joint_states" /> -->
     </node>
 
+    <!-- Indicate in the tf tree that the camera and platform's worlds coincide -->
+    <node name="static_tf2_world_broadcaster" type="static_tf2_world_broadcaster.py" pkg="camera"/>
+
+    <!-- Add a new frame to retrieve the right theorical orientation of the camera -->
+    <node name="new_camera_frame" type="new_camera_frame.py" pkg="camera"/>
+
 </launch>

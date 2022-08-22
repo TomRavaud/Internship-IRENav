@@ -13,4 +13,6 @@
         <!-- <remap from="/joint_states" to="/mobile_platform/joint_states" /> -->
     </node>
 
+    <!-- Add a frame on the upper side of the board -->
+    <node name="new_board_frame" type="new_board_frame.py" pkg="platform_description"/>
 </launch>

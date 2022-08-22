@@ -1,5 +1,11 @@
 import numpy as np
 
+def transform_matrix(R, T):
+    HTM = np.zeros((4, 4))
+    HTM[:3, :3], HTM[:3, 3] = R, T
+    HTM[3, 3] = 1
+    
+    return HTM
 
 def apply_rigid_motion(points, R, T):
     """Give points' coordinates in a new frame obtained after rotating (R)
@@ -21,11 +27,12 @@ def apply_rigid_motion(points, R, T):
     homogeneous_points[:, :-1] = points
     
     # Concatenate the rotation matrix and the translation vector
-    homogeneous_matrix = np.zeros((3, 4))
-    homogeneous_matrix[:, :-1], homogeneous_matrix[:, -1] = R, T
+    # homogeneous_matrix = np.zeros((3, 4))
+    # homogeneous_matrix[:, :-1], homogeneous_matrix[:, -1] = R, T
+    HTM = transform_matrix(R, T)
     
     # Compute points coordinates after the rigid motion
-    points_new = np.dot(homogeneous_points, np.transpose(homogeneous_matrix))
+    points_new = np.dot(homogeneous_points, np.transpose(HTM[:3, :]))
     
     return points_new
 
