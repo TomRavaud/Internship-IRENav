@@ -46,9 +46,9 @@ class PoseEstimation:
         # Initialize the rotation and the translation
         # These values correspond to the initial transformation between the camera
         # frame and the platform frame
-        self.T = np.array([0., 0., 0.975])#TODO: modif
-        self.R = np.array([[0, 1, 0],
-                           [1, 0, 0],
+        self.T = np.array([0., 0., 1.475])#TODO: modif
+        self.R = np.array([[0, -1, 0],
+                           [-1, 0, 0],
                            [0, 0, -1]])
         
         # Declare a depth image attribute
@@ -154,6 +154,7 @@ class PoseEstimation:
         # Update axes points coordinates
         axes_points_camera = sf.apply_rigid_motion(self.AXES_POINTS_PLATFORM,
                                                    self.R, self.T)
+        
         
         # Compute those points coordinates in the image plan
         axes_points_image = sf.camera_frame_to_image(axes_points_camera,

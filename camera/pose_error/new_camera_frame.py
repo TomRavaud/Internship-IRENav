@@ -24,7 +24,7 @@ class FixedTFBroadcaster:
             t.transform.translation.y = 0.0
             t.transform.translation.z = 0.0
             
-            quat = tf_conversions.transformations.quaternion_from_euler(np.pi/2, 0., np.pi/2)
+            quat = tf_conversions.transformations.quaternion_from_euler(-np.pi/2, 0., -np.pi/2)
 
             t.transform.rotation.x = quat[0]
             t.transform.rotation.y = quat[1]

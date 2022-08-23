@@ -48,10 +48,10 @@ def draw_axes(image, axes_points_image):
     
     # Link the points with 3 lines to represent the axes
     image = cv2.line(image, tuple(axes_points_image[3]),
-                     tuple(axes_points_image[0]), (255, 0, 0), 3)
+                     tuple(axes_points_image[0]), (0, 0, 255), 3) # X axis (red)
     image = cv2.line(image, tuple(axes_points_image[3]),
-                     tuple(axes_points_image[1]), (0, 255, 0), 3)
+                     tuple(axes_points_image[1]), (0, 255, 0), 3) # Y axis (green)
     image = cv2.line(image, tuple(axes_points_image[3]),
-                     tuple(axes_points_image[2]), (0, 0, 255), 3)
+                     tuple(axes_points_image[2]), (255, 0, 0), 3) # Z axis (blue)
     
     return image

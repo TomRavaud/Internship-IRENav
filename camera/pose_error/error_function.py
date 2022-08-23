@@ -40,6 +40,9 @@ def error_function(HTM1, HTM2):
     Returns:
         tuple (2): errors on the translation and on the rotation
     """
+    R1 = HTM1[:3, :3]
+    R2 = HTM2[:3, :3]
+    
     # Compute the transformation matrix between 1 and 2
     HTM12 = np.dot(np.linalg.inv(HTM1), HTM2)
     
