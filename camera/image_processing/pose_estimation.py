@@ -46,7 +46,7 @@ class PoseEstimation:
         # Initialize the rotation and the translation
         # These values correspond to the initial transformation between the camera
         # frame and the platform frame
-        self.T = np.array([0., 0., 1.475])
+        self.T = np.array([0., 0., 0.975])#TODO: modif
         self.R = np.array([[0, 1, 0],
                            [1, 0, 0],
                            [0, 0, -1]])
