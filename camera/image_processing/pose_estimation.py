@@ -6,14 +6,11 @@ import rospy
 # cv_bridge is used to convert ROS Image message type into OpenCV images
 import cv_bridge
 
-import tf.transformations
-
 # Import useful ROS types
 from sensor_msgs.msg import Image, CameraInfo
 from geometry_msgs.msg import TransformStamped
 
 # Python librairies
-import cv2
 import numpy as np
 
 
@@ -24,7 +21,7 @@ import optical_flow as of
 import infinitesimal_motion as im
 import switch_frame as sf
 import drawing as dw
-
+import conversions
 
 class PoseEstimation:
     def __init__(self):
@@ -42,14 +39,6 @@ class PoseEstimation:
         # These values are expressed in the platform coordinate system
         self.AXES_POINTS_PLATFORM = np.array([[0.3, 0, 0], [0, 0.3, 0],
                                               [0, 0, 0.3], [0, 0, 0]], dtype="float32")
-        
-        # Initialize the rotation and the translation
-        # These values correspond to the initial transformation between the camera
-        # frame and the platform frame
-        self.T = np.array([0., 0., 1.475])#TODO: modif
-        self.R = np.array([[0, -1, 0],
-                           [-1, 0, 0],
-                           [0, 0, -1]])
         
         # Declare a depth image attribute
         self.depth_image = None
@@ -76,6 +65,29 @@ class PoseEstimation:
         # Initialize the publisher to the pose_estimate topic
         self.pub_pose = rospy.Publisher("pose_estimate", TransformStamped,
                                         queue_size=1)
+        
+        # Initialize the rotation and the translation
+        # These values correspond to the initial transformation between the camera
+        # frame and the platform frame
+        self.T = np.array([0., 0., 1.475])
+        self.R = np.array([[0, -1, 0],
+                           [-1, 0, 0],
+                           [0, 0, -1]])
+        
+        # Initialize the subscriber to the pose_true topic
+        self.sub_pose_true = rospy.Subscriber("pose_true", TransformStamped,
+                                              self.callback_pose_true,
+                                              queue_size=1)
+        
+        # Declare an attribute to store the true transform between the camera
+        # and the platform's frames
+        self.HTM_true = None
+        
+        # initial_true_transform = rospy.wait_for_message("pose_true", TransformStamped)
+        # HTM0 = conversions.tf_to_transform_matrix(initial_true_transform.transform)
+        # self.T = HTM0[:3, 3]
+        # self.R = HTM0[:3, :3]
+        
 
     def callback_image(self, msg):
         """Function called each time a new ros Image message is received on
@@ -96,7 +108,7 @@ class PoseEstimation:
             
             # Set a threshold to avoid having too many corners,
             # its value depends on the image
-            threshold = 0.7
+            threshold = 0.5
             
             # Extract corners coordinates
             points = fd.corners_detection(harris_score, threshold)
@@ -114,7 +126,7 @@ class PoseEstimation:
                                                               self.old_points)
 
             # Get the duration between two published messages
-            dt = (time - self.old_time).to_sec()
+            # dt = (time - self.old_time).to_sec()
             
             # Compute the displacement of the corners between the 2 images
             points_displacement = of.sparse_displacement(self.old_points,
@@ -135,70 +147,61 @@ class PoseEstimation:
             
             # Extract infinitesimal rotation and translation
             dT = dmotion[:3]
-            # print(dT)
             dtheta = dmotion[-3:]
 
             # Compute the infinitesimal rotation matrix from the angles
             dR = im.infinitesimal_rotation_matrix(dtheta)
             
+            # Update R and T values
             self.R = np.dot(dR, self.R)
             self.T = np.dot(dR, self.T) + dT
             
         # Update old image and points
         self.old_image = image
         self.old_points = points
-        
+         
         # Update the time the last message was published
         self.old_time = time
 
+        # Gather the rotation and the translation in a transform matrix
+        HTM = sf.transform_matrix(self.R, self.T)
+        # Convert the transform matrix to a ROS Transform object
+        camera_platform_transform = conversions.transform_matrix_to_tf(HTM)
+        # Publish the transform to the pose_estimate topic
+        self.pub_pose.publish(camera_platform_transform)
+            
         # Update axes points coordinates
         axes_points_camera = sf.apply_rigid_motion(self.AXES_POINTS_PLATFORM,
-                                                   self.R, self.T)
-        
-        
+                                                HTM)
+        axes_points_camera_true = sf.apply_rigid_motion(self.AXES_POINTS_PLATFORM,
+                                                        self.HTM_true)
         # Compute those points coordinates in the image plan
         axes_points_image = sf.camera_frame_to_image(axes_points_camera,
-                                                     self.K)
-        
+                                                    self.K)
+        axes_points_image_true = sf.camera_frame_to_image(axes_points_camera_true,
+                                                          self.K)
+            
         # Draw the platform axes on the image
         image = dw.draw_axes(image, axes_points_image)
-        
+        image = dw.draw_axes(image, axes_points_image_true,
+                             colors = [(255, 0, 255), (255, 0, 255), (150, 0, 150)])
+            
         # Draw key-points on the image
-        image = dw.draw_points(image, points)
-        
+        image = dw.draw_points(image, points[1:])
+            
         # Display the image
         dw.show_image(image)
         
-        # Publish the transform to the pose_estimate topic
-        # Instantiate a TransformStamped message
-        camera_platform_transform = TransformStamped()
-        
-        # Fill the stamp, parent and child's id attributes
-        camera_platform_transform.header.stamp = rospy.Time.now()
-        camera_platform_transform.header.frame_id = "camera1/camera_frame_oriented"
-        camera_platform_transform.child_frame_id = "mobile_platform/board_upper_side"
-        
-        # Set the translation
-        camera_platform_transform.transform.translation.x = self.T[0]
-        camera_platform_transform.transform.translation.y = self.T[1]
-        camera_platform_transform.transform.translation.z = self.T[2]
-        
-        # Gather the rotation and the translation in a transform matrix
-        HTM = sf.transform_matrix(self.R, self.T)
-        
-        # Convert the rotation matrix to quaternion
-        q = tf.transformations.quaternion_from_matrix(HTM)
+    def callback_pose_true(self, msg):
+        """Function caller each time a new ROS TransformStamped is received
+        on the pose_true topic
 
-        # Set the rotation
-        camera_platform_transform.transform.rotation.x = q[0]
-        camera_platform_transform.transform.rotation.y = q[1]
-        camera_platform_transform.transform.rotation.z = q[2]
-        camera_platform_transform.transform.rotation.w = q[3]
+        Args:
+            msg (geometry_msgs/TransformStamped): the true transform between
+            the camera and the platform's frames
+        """
+        self.HTM_true = conversions.tf_to_transform_matrix(msg.transform)
         
-        # Publish the transform to the camera_platform_transform topic
-        self.pub_pose.publish(camera_platform_transform)
-
-
     def callback_depth(self, msg):
         """Function called each time a new ROS Image is received on
         the camera1/image_raw_depth topic
@@ -208,10 +211,11 @@ class PoseEstimation:
         # Convert the ROS Image into the OpenCV format
         # They are encoded as 32-bit float (32UC1) and each pixel is a depth
         # along the camera Z axis in meters
+        # self.dstamp = msg.header.stamp
         self.depth_image = self.bridge.imgmsg_to_cv2(
             msg, desired_encoding="passthrough")
 
-        
+ 
 # Main program
 # The "__main__" flag acts as a shield to avoid these lines to be executed if
 # this file is imported in another one
@@ -224,4 +228,4 @@ if __name__ == "__main__":
 
     # Run the node until Ctrl + C is pressed
     rospy.spin()
-    
+ 

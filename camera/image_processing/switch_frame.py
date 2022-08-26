@@ -1,18 +1,27 @@
 import numpy as np
 
 def transform_matrix(R, T):
+    """Compute the transform matrix from the rotation and the translation
+
+    Args:
+        R (ndarray (3, 3)): rotation matrix
+        T (ndarray (3,)): translation vector
+
+    Returns:
+        ndarray (4, 4): the corresponding homogeneous transform matrix
+    """
     HTM = np.zeros((4, 4))
     HTM[:3, :3], HTM[:3, 3] = R, T
     HTM[3, 3] = 1
     
     return HTM
 
-def apply_rigid_motion(points, R, T):
+def apply_rigid_motion(points, HTM):
     """Give points' coordinates in a new frame obtained after rotating (R)
     and translating (T) the current one
 
     Args:
-        points (ndarray (N, 2)): a set of points
+        points (ndarray (N, 3)): a set of points
         R (ndarray (3, 3)): a rotation matrix
         T (ndarray (3,)): a translation vector
 
@@ -25,11 +34,6 @@ def apply_rigid_motion(points, R, T):
     # Use homogenous coordinates
     homogeneous_points = np.ones((nb_points, 4))
     homogeneous_points[:, :-1] = points
-    
-    # Concatenate the rotation matrix and the translation vector
-    # homogeneous_matrix = np.zeros((3, 4))
-    # homogeneous_matrix[:, :-1], homogeneous_matrix[:, -1] = R, T
-    HTM = transform_matrix(R, T)
     
     # Compute points coordinates after the rigid motion
     points_new = np.dot(homogeneous_points, np.transpose(HTM[:3, :]))

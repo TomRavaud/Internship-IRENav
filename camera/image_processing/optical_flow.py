@@ -21,7 +21,7 @@ def points_next_position_lk(image, old_image, old_points):
     # if 0, pyramids are not used (single level),
     # if 1, 2 different levels,
     # etc..
-    lk_params = dict(winSize=(15, 15), maxLevel=0,
+    lk_params = dict(winSize=(15, 15), maxLevel=2,
                      criteria=(cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT,
                      10, 0.03))
 

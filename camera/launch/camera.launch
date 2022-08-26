@@ -10,6 +10,7 @@
     <!-- Convert joint states to TF transforms for rviz, etc -->
     <node ns="camera1" name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
         respawn="false" output="screen">
+        <param name="rate" value="50"/>
         <!-- <remap from="/joint_states" to="/camera1/joint_states" /> -->
     </node>
 
@@ -18,5 +19,8 @@
 
     <!-- Add a new frame to retrieve the right theorical orientation of the camera -->
     <node name="new_camera_frame" type="new_camera_frame.py" pkg="camera"/>
+
+    <!-- Publish the true transform between the camera and the platform's frames -->
+    <node name="pose_listener_publisher" type="pose_true_publisher.py" pkg="camera"/>
 
 </launch>

@@ -1,6 +1,5 @@
 import numpy as np
 
-
 def compute_infinitesimal_rigid_motion(points_displacement, old_points, K, depth_image):
     """Compute the infinitesimal rigid motion of an object in the camera
     coordinate system from the displacement on the images of some of its
@@ -18,13 +17,6 @@ def compute_infinitesimal_rigid_motion(points_displacement, old_points, K, depth
     Returns:
         ndarray (6,): the estimation of infinitesimal translation and rotation
     """
-    # Number of points for which the optical flow has been successfully
-    # computed
-    nb_points = np.shape(old_points)[0]
-    
-    # Check we have enough points (3) to estimate the 6 motion parameters
-    assert nb_points >= 3, "Need to have at least 3 detected points"
-    
     # Get the coordinates of the image's origin
     mu0, nu0 = K[0, 2], K[1, 2]
 
@@ -32,8 +24,36 @@ def compute_infinitesimal_rigid_motion(points_displacement, old_points, K, depth
     points = np.copy(old_points)
     mu, nu = points[:, 0], points[:, 1]
     
+    #FIXME: inversion of mu and nu in the depth image ???
     # Associate those points with their depth in the camera frame
-    zc = depth_image[tuple(mu.astype(int)), tuple(nu.astype(int))]
+    zc = depth_image[tuple(nu.astype(int)), tuple(mu.astype(int))]
+    # print(depth_image[int(nu[1]), int(mu[1])])
+    
+    #TODO: Keep non zeros ??
+    # Detect NaN values in zc and remove the corresponding points
+    zc[zc == 0] = np.nan
+    non_nan = ~np.isnan(zc)
+    zc, mu, nu, points_displacement = zc[non_nan], mu[non_nan], nu[non_nan], points_displacement[non_nan]
+    
+    # Number of points for which the optical flow has been successfully
+    # computed and the depth has been obtained
+    nb_points = np.count_nonzero(non_nan)
+    # print("Nombre points : ", nb_points)
+    # print(zc)
+    
+    # points = points[non_nan]
+    # for point in points:
+    #     cv2.circle(depth_image, tuple(point), radius=3,
+    #                color=(0, 255, 0), thickness=-1)
+        
+    # cv2.imshow("Test", depth_image)
+    
+    # # Wait for 3 ms (for a key press) before automatically destroying
+    # # the current window
+    # cv2.waitKey(3)
+    
+    # Check we have enough points (3) to estimate the 6 motion parameters
+    assert nb_points >= 3, "Need to have at least 3 detected points"
     
     # Change the image's origin from the top left corner to the center
     mu -= mu0
@@ -79,4 +99,3 @@ def infinitesimal_rotation_matrix(dtheta):
                    [-dthetay, dthetax, 1]])
     
     return dR
-

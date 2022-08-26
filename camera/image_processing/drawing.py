@@ -25,6 +25,9 @@ def draw_points(image, points):
     Returns:
         cv::Mat: the modified image
     """
+    # Convert points coordinates to int to correspond to pixel values
+    points = points.astype(int)
+    
     # Draw a red circle on the image for point
     for point in points:
         cv2.circle(image, tuple(point), radius=3,
@@ -32,7 +35,7 @@ def draw_points(image, points):
         
     return image
 
-def draw_axes(image, axes_points_image):
+def draw_axes(image, axes_points_image, colors=[(0, 0, 255), (0, 255, 0), (255, 0, 0)]):
     """Draw a coordinate frame from 4 points
 
     Args:
@@ -48,10 +51,10 @@ def draw_axes(image, axes_points_image):
     
     # Link the points with 3 lines to represent the axes
     image = cv2.line(image, tuple(axes_points_image[3]),
-                     tuple(axes_points_image[0]), (0, 0, 255), 3) # X axis (red)
+                     tuple(axes_points_image[0]), colors[0], 3) # X axis (red)
     image = cv2.line(image, tuple(axes_points_image[3]),
-                     tuple(axes_points_image[1]), (0, 255, 0), 3) # Y axis (green)
+                     tuple(axes_points_image[1]), colors[1], 3) # Y axis (green)
     image = cv2.line(image, tuple(axes_points_image[3]),
-                     tuple(axes_points_image[2]), (255, 0, 0), 3) # Z axis (blue)
+                     tuple(axes_points_image[2]), colors[2], 3) # Z axis (blue)
     
     return image

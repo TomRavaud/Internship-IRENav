@@ -13,15 +13,29 @@ import error_function as ef
 
 class PoseError:
     def __init__(self):
-        # Initialize the subscriber to the pose_estimate topic
-        self.sub_pose = rospy.Subscriber("pose_estimate", TransformStamped,
-                                         self.callback_pose)
+        # Define a variable which will store the true transform between
+        # the camera frame and the board frame
+        self.transform_true = None
         
-        # Instantiate a buffer and a tf listener
-        self.tfBuffer = tf2_ros.Buffer()
-        self.listener = tf2_ros.TransformListener(self.tfBuffer)
- 
-    def callback_pose(self, msg):
+        # Initialize the subscriber to the pose_true topic
+        self.sub_pose_true = rospy.Subscriber("pose_true", TransformStamped,
+                                              self.callback_pose_true)
+        
+        # Initialize the subscriber to the pose_estimate topic
+        self.sub_pose_estimate = rospy.Subscriber("pose_estimate", TransformStamped,
+                                         self.callback_pose_estimate)
+    
+    def callback_pose_true(self, msg):
+        """Function called each time a new ROS TransformStamped message is
+        received in the pose_true topic
+
+        Args:
+            msg (ROS TransformStamped): the true transform computed from
+            the tf topic
+        """
+        self.transform_true = msg
+        
+    def callback_pose_estimate(self, msg):
         """Function called each time a new ROS TransformStamped message is
         received on the pose_estimate topic
 
@@ -29,45 +43,29 @@ class PoseError:
             msg (ROS TransformStamped): a computed transform between the
             camera and the board frames
         """
-        # Get the transform between the camera frame and the board frame
-        self.trans = self.tfBuffer.lookup_transform(
-            "camera1/camera_frame_oriented",
-            "mobile_platform/board_upper_side", rospy.Time())
+        if self.transform_true is not None:
+            # Convert the true transform to a numpy array
+            HTM1 = ef.tf_to_transform_matrix(self.transform_true.transform)
         
-        # Convert the Transform type to a numpy array
-        HTM1 = ef.tf_to_transform_matrix(self.trans.transform)
+            # Convert the transform estimate to a numpy array
+            HTM2 = ef.tf_to_transform_matrix(msg.transform)
         
-        # Convert the transform estimate to a numpy array
-        HTM2 = ef.tf_to_transform_matrix(msg.transform)
-        
-        # Compute errors on translation and rotation between the true value
-        # and the estimated one
-        error_translation, error_rotation = ef.error_function(HTM1, HTM2)
+            # Compute errors on translation and rotation between the true value
+            # and the estimated one
+            error_translation, error_rotation = ef.error_function(HTM1, HTM2)
 
-        #TODO: continue the string on the next line
-        print("The error on the translation is "
-              f"{round(error_translation, 4)} m\n"
-              "The error on the rotation is "
-              f"{round(error_rotation, 4)} rad"
-              "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+            print("The error on the translation is "
+                  f"{round(error_translation, 4)} m\n"
+                  "The error on the rotation is "
+                  f"{round(error_rotation, 4)} rad"
+                  "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
 
  
 if __name__ == "__main__":
     rospy.init_node("pose_error")
     
     # Instantiate an object
-    pose_error = PoseError()    
-
-    # tfBuffer = tf2_ros.Buffer()
-    # listener = tf2_ros.TransformListener(tfBuffer)
-
-    # rate = rospy.Rate(10.0)
-    # try:
-    #     trans = tfBuffer.lookup_transform("camera1/camera_frame_oriented",
-    #                                       "mobile_platform/board_upper_side", rospy.Time())
-    # except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
-    #     rate.sleep()
+    pose_error = PoseError() 
 
     rospy.spin() 
-    # msg.transform
  

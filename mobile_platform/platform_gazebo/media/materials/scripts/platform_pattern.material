@@ -8,6 +8,6 @@ material PlatformPattern{
                 texture ../textures/pattern.png
                 scale 1 1
             }
-        }   
+        } 
     }
 }
