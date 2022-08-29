@@ -1,9 +1,13 @@
 <?xml version="1.0"?>
 <launch>
 
+    <!-- TODO: -->
     <!-- Load the controllers -->
     <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-        output="screen" args="roll_joint_position_controller pitch_joint_position_controller 
-        yaw_joint_position_controller joint_state_controller"/>
+        output="screen" args="tx_joint_position_controller ty_joint_position_controller tz_joint_position_controller
+        roll_joint_position_controller pitch_joint_position_controller yaw_joint_position_controller
+        joint_state_controller"/>
+
+    <node name="joints_reset" type="joints_reset.py" pkg="platform_control"/>
 
 </launch>

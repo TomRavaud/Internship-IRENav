@@ -39,8 +39,21 @@
             <child link="${child_name}_link"/>
             <origin xyz="${origin}"/>
             <axis xyz="${axis}"/>
-            <limit upper="1.57" lower="-1.57" effort="1" velocity="10"/>
-            <!-- <dynamics damping="0.1" friction="0.1"/> -->
+            <limit upper="1.57" lower="-1.57" effort="5" velocity="10"/>
+            <dynamics damping="0.1" friction="0.1"/>
+        </joint>
+    </xacro:macro>
+
+    <!-- TODO: Gather revolute and prismatic joints in a single macro-->
+    <!-- Simple prismatic joint -->
+    <xacro:macro name="prismatic_joint" params="name parent_name child_name origin axis">
+        <joint name="${name}_joint" type="prismatic">
+            <parent link="${parent_name}_link"/>
+            <child link="${child_name}_link"/>
+            <origin xyz="${origin}"/>
+            <axis xyz="${axis}"/>
+            <limit upper="3.0" lower="-3.0" effort="5" velocity="10"/>
+            <dynamics damping="0.1" friction="0.1"/>
         </joint>
     </xacro:macro>
 
@@ -67,6 +80,9 @@
     <!-- Links -->
     <link name="world"/>
     
+    <xacro:box_link name="base_tx" length="0" width="0" height="0" material="red"/>
+    <xacro:box_link name="base_ty" length="0" width="0" height="0" material="red"/>
+    <xacro:box_link name="base_tz" length="0" width="0" height="0" material="red"/>
     <xacro:box_link name="base_yaw" length="0" width="0" height="0" material="red"/>
     <xacro:box_link name="base_pitch" length="0" width="0" height="0" material="red"/>
     <xacro:box_link name="base_roll" length="0" width="0" height="0" material="red"/>
@@ -75,17 +91,23 @@
     <!-- Joints -->
     <joint name="fixed" type="fixed">
         <parent link="world"/>
-        <child link="base_yaw_link"/>
+        <child link="base_tx_link"/>
         <origin xyz="0 0 1."/>
     </joint>
 
+    <xacro:prismatic_joint name="tx" parent_name="base_tx" child_name="base_ty" origin="0 0 0" axis="1 0 0"/>
+    <xacro:prismatic_joint name="ty" parent_name="base_ty" child_name="base_tz" origin="0 0 0" axis="0 1 0"/>
+    <xacro:prismatic_joint name="tz" parent_name="base_tz" child_name="base_yaw" origin="0 0 0" axis="0 0 1"/>
     <xacro:revolute_joint name="yaw" parent_name="base_yaw" child_name="base_pitch" origin="0 0 0" axis="0 0 1"/>
     <xacro:revolute_joint name="pitch" parent_name="base_pitch" child_name="base_roll" origin="0 0 0" axis="0 1 0"/>
     <xacro:revolute_joint name="roll" parent_name="base_roll" child_name="board" origin="0 0 0" axis="1 0 0"/>
 
     <!-- Transmissions -->
+    <xacro:transmission joint_name="tx"/>
+    <xacro:transmission joint_name="ty"/>
+    <xacro:transmission joint_name="tz"/>
     <xacro:transmission joint_name="roll"/>
     <xacro:transmission joint_name="pitch"/>
     <xacro:transmission joint_name="yaw"/>
-
+    
 </robot>

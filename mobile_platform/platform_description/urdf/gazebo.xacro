@@ -14,9 +14,22 @@
         <gravity>0</gravity>
     </gazebo>
 
-    <!-- <gazebo reference="base_yaw_link">
+    <gazebo reference="base_yaw_link">
         <gravity>0</gravity>
-    </gazebo> -->
+    </gazebo>
+
+    <!-- TODO: -->
+    <gazebo reference="base_tx_link">
+        <gravity>0</gravity>
+    </gazebo>
+
+    <gazebo reference="base_ty_link">
+        <gravity>0</gravity>
+    </gazebo>
+
+    <gazebo reference="base_tz_link">
+        <gravity>0</gravity>
+    </gazebo>
 
     <!-- Add texture/colors to links -->
     <gazebo reference="board_link">

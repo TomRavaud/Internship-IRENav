@@ -4,7 +4,19 @@ mobile_platform:
     type: joint_state_controller/JointStateController
     publish_rate: 50  
 
-  # Position Controller
+  # Position controllers
+  tx_joint_position_controller:
+    type: position_controllers/JointPositionController
+    joint: tx_joint
+  
+  ty_joint_position_controller:
+    type: position_controllers/JointPositionController
+    joint: ty_joint
+
+  tz_joint_position_controller:
+    type: position_controllers/JointPositionController
+    joint: tz_joint
+
   roll_joint_position_controller:
     type: position_controllers/JointPositionController
     joint: roll_joint
@@ -18,17 +30,32 @@ mobile_platform:
     joint: yaw_joint
 
   gazebo_ros_control/pid_gains:
-    roll_joint:
-      p: 400.0
+    tx_joint:
+      p: 10.0
       i: 0.01
-      d: 10.0
+      d: 1.0
+
+    ty_joint:
+      p: 10.0
+      i: 0.01
+      d: 1.0
+      
+    tz_joint:
+      p: 10.0
+      i: 0.01
+      d: 1.0
+
+    roll_joint:
+      p: 10.0
+      i: 0.01
+      d: 1.0
 
     pitch_joint:
-      p: 400.0
+      p: 10.0
       i: 0.01
-      d: 10.0
+      d: 1.0
 
     yaw_joint:
-      p: 400.0
+      p: 10.0
       i: 0.01
-      d: 10.0
+      d: 1.0

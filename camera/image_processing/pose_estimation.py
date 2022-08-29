@@ -108,7 +108,7 @@ class PoseEstimation:
             
             # Set a threshold to avoid having too many corners,
             # its value depends on the image
-            threshold = 0.5
+            threshold = 0.4
             
             # Extract corners coordinates
             points = fd.corners_detection(harris_score, threshold)
@@ -182,15 +182,16 @@ class PoseEstimation:
                                                           self.K)
             
         # Draw the platform axes on the image
-        image = dw.draw_axes(image, axes_points_image)
-        image = dw.draw_axes(image, axes_points_image_true,
+        image_to_display = np.copy(image)
+        image_to_display = dw.draw_axes(image_to_display, axes_points_image)
+        image_to_display = dw.draw_axes(image_to_display, axes_points_image_true,
                              colors = [(255, 0, 255), (255, 0, 255), (150, 0, 150)])
             
         # Draw key-points on the image
-        image = dw.draw_points(image, points[1:])
+        image_to_display = dw.draw_points(image_to_display, points)
             
         # Display the image
-        dw.show_image(image)
+        dw.show_image(image_to_display)
         
     def callback_pose_true(self, msg):
         """Function caller each time a new ROS TransformStamped is received
