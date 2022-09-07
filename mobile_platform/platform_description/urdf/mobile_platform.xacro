@@ -44,7 +44,6 @@
         </joint>
     </xacro:macro>
 
-    <!-- TODO: Gather revolute and prismatic joints in a single macro-->
     <!-- Simple prismatic joint -->
     <xacro:macro name="prismatic_joint" params="name parent_name child_name origin axis">
         <joint name="${name}_joint" type="prismatic">

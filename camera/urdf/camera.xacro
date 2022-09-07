@@ -21,6 +21,7 @@
         <visual>
             <geometry>
                 <box size="${camera_size} ${camera_size} ${camera_size}"/>
+                <!-- <mesh filename="../meshes/Hexa.obj" scale="0.001 0.001 0.001"/> -->
             </geometry>
             <!-- <geometry>
                 <mesh filename="../meshes/test.stl" scale="0.001 0.001 0.001"/>
@@ -30,6 +31,7 @@
         <collision>
             <geometry>
                 <box size="${camera_size} ${camera_size} ${camera_size}"/>
+                <!-- <mesh filename="../meshes/Hexa.obj" scale="0.001 0.001 0.001"/> -->
             </geometry>
             <!-- <geometry>
                 <mesh filename="file://media/tom/Shared/Stage-EN-2022/quadcopter_landing_ws/src/camera/meshes/STD04_0000_Hexapode-MISTRAL_600.stl" scale="0.001 0.001 0.001"/>

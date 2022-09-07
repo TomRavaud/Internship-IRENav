@@ -15,7 +15,7 @@ def show_image(image):
     # the current window
     cv2.waitKey(3)
 
-def draw_points(image, points):
+def draw_points(image, points, color=(0, 0, 255)):
     """Draw some points on an image
 
     Args:
@@ -31,7 +31,7 @@ def draw_points(image, points):
     # Draw a red circle on the image for point
     for point in points:
         cv2.circle(image, tuple(point), radius=3,
-                   color=(0, 0, 255), thickness=-1)
+                   color=color, thickness=-1)
         
     return image
 

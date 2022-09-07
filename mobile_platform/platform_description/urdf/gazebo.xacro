@@ -18,7 +18,6 @@
         <gravity>0</gravity>
     </gazebo>
 
-    <!-- TODO: -->
     <gazebo reference="base_tx_link">
         <gravity>0</gravity>
     </gazebo>

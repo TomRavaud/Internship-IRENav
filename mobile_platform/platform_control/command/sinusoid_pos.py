@@ -57,12 +57,12 @@ if __name__ == "__main__":
     
     while not rospy.is_shutdown():
         position_roll.data = sinusoid(rospy.get_time() - time, A, f_roll)
-        position_pitch.data = sinusoid(rospy.get_time() - time, A, f_pitch)
+        # position_pitch.data = sinusoid(rospy.get_time() - time, A, f_pitch)
         # position_yaw.data = sinusoid(rospy.get_time() - time, A, f_yaw)
 
         # Publish the position
         pub_roll.publish(position_roll)
-        pub_pitch.publish(position_pitch)
+        # pub_pitch.publish(position_pitch)
         # pub_yaw.publish(position_yaw)
 
         rate.sleep()

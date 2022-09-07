@@ -1,3 +1,5 @@
-.vscode
+.vscode/
 2022-07-18-15-45-42.bag
 recording.bag
+__pycache__/
+frames.gv
