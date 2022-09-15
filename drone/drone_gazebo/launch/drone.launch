@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<launch>
+    <arg name="init_pose"/>
+
+    <!-- Spawn a drone in Gazebo -->
+    <node name="spawner" pkg="gazebo_ros" type="spawn_model" output="screen"
+        args="-sdf -model my_drone_with_camera $(arg init_pose) -file $(find drone_gazebo)/models/drone_with_camera/model.sdf"/>
+
+</launch>
