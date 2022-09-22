@@ -24,12 +24,9 @@ def compute_infinitesimal_rigid_motion(points_displacement, old_points, K, depth
     points = np.copy(old_points)
     mu, nu = points[:, 0], points[:, 1]
     
-    #FIXME: inversion of mu and nu in the depth image ???
     # Associate those points with their depth in the camera frame
     zc = depth_image[tuple(nu.astype(int)), tuple(mu.astype(int))]
-    # print(depth_image[int(nu[1]), int(mu[1])])
     
-    #TODO: Keep non zeros ??
     # Detect NaN values in zc and remove the corresponding points
     zc[zc == 0] = np.nan
     non_nan = ~np.isnan(zc)

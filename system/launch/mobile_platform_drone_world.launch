@@ -4,7 +4,7 @@
     <!-- SIMPLE WORLD -->
     <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
-        <arg name="world_name" value="$(find system)/worlds/simple.world"/>
+        <arg name="world_name" value="$(find system)/worlds/simple_world.world"/>
         <!-- Run Gazebo server only (without GUI) -->
         <!-- <arg name="gui" value="false"/> -->
     </include>
@@ -28,7 +28,8 @@
     <!-- DRONE -->
     <!-- Drone model -->
     <include file="$(find drone_gazebo)/launch/drone.launch" >
-        <arg name="init_pose" value="-x -3 -y 0 -z 0" />
+        <arg name="init_pose" value="-x -1.5 -y 0 -z 0 -R 0 -P 0 -Y 0" />
+        <!-- <arg name="init_pose" value="-x -1.5 -y 0 -z 0 -R 0 -P 0 -Y 1.57079632679" /> -->
     </include>
 
 </launch>

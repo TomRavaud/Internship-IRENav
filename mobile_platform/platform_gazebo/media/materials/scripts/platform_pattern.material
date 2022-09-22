@@ -5,7 +5,7 @@ material PlatformPattern{
         {
             texture_unit
             {
-                texture ../textures/pattern.png
+                texture ../textures/texture_wall.jpg
                 scale 1 1
             }
         } 
