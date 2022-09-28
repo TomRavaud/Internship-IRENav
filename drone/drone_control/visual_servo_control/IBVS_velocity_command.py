@@ -37,19 +37,17 @@ def compute_interaction_matrix(old_points, K):
     # Compute the lines of the interaction matrix L obtained by derivation of the ideal
     # optical flow
     f = K[0, 0] # Get the focal length of the camera
-    L0 = -np.stack((f/zc, np.zeros_like(mu), -mu/zc,
-                   -mu*nu/f, mu**2/f + f, -nu), axis=1)  # Even lines
-    L1 = -np.stack((np.zeros_like(mu), f/zc, -nu/zc,
-                   -nu**2/f - f, mu*nu/f, mu), axis=1)  # Odd lines
+    L0 = -np.stack((f/zc, np.zeros_like(mu), -mu/zc, -nu), axis=1)  # Even lines
+    L1 = -np.stack((np.zeros_like(mu), f/zc, -nu/zc, mu), axis=1)  # Odd lines
 
     # Arrange these lines to form the matrix L
-    L = np.empty((2*nb_points, 6))
+    L = np.empty((2*nb_points, 4))
     L[0::2, :] = L0
     L[1::2, :] = L1
     
     return L
 
-def velocity_command(L, current_points, target_points, lamb=0.5):
+def velocity_command(L, current_points, old_points, target_points, dt, lamb=0.5):
     # Compute the error between current and target points positions
     error = current_points - target_points
     

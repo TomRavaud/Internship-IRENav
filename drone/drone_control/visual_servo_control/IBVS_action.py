@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 
 # ROS - Python librairies
+from json.encoder import INFINITY
 import rospy
+import actionlib
+from drone_control.msg import IBVSAction, IBVSGoal, IBVSResult
 
 # cv_bridge is used to convert ROS Image message type into OpenCV images
 import cv_bridge
@@ -20,7 +23,7 @@ import SIFT_detection_matching as sift
 import IBVS_velocity_command as vc
 
 
-class IBVS:
+class IBVSbis:
     def __init__(self):
         """Constructor of the class
         """
@@ -39,8 +42,6 @@ class IBVS:
         
         self.old_time = None
         
-        # self.depth_image = None
-        
         # Initialize the bridge between ROS and OpenCV images
         self.bridge = cv_bridge.CvBridge()
         
@@ -52,18 +53,42 @@ class IBVS:
         # more conventional form
         self.K = camera_info.K
         self.K = np.reshape(np.array(self.K), (3, 3))
-        
-        # Initialize the subscriber to the camera images topic
-        self.sub_image = rospy.Subscriber("camera1/image_raw", Image,
-                                          self.callback_image, queue_size=1)
-        # Initialize the subscriber to the depth image topic
-        # self.sub_depth = rospy.Subscriber("camera1/image_raw_depth", Image,
-        #                                   self.callback_depth)
-        
+         
         # Initialize a publisher to the drone velocity topic
         self.pub_velocity = rospy.Publisher(
             "mavros/setpoint_velocity/cmd_vel", TwistStamped, queue_size=1)
-                
+        
+        self.server = actionlib.SimpleActionServer("drone/IBVS", IBVSAction, self.do_stabilize, False)
+        self.server.start()
+        
+        self.error_norm = 1e4
+        
+    
+    def do_stabilize(self, goal):
+        
+        # TODO: If an image has been given
+        if goal.stabilize:
+            
+            # Throw away all the messages older than 1 second from now
+            # It is not the best way to do it, it would be better changing the
+            # system architecture
+            current_time = rospy.get_time()  # Get the current simulation time
+            image = rospy.wait_for_message("camera1/image_raw", Image)
+            
+            while image.header.stamp.secs + 1 < current_time:
+                image = rospy.wait_for_message("camera1/image_raw", Image)
+            
+            # Initialize the subscriber to the camera images topic
+            self.sub_image = rospy.Subscriber("camera1/image_raw", Image,
+                                          self.callback_image, queue_size=1)
+
+            while self.error_norm > 20:
+                continue
+
+        result = IBVSResult()
+        result.state = "done"
+        self.server.set_succeeded(result)
+        
 
     def callback_image(self, msg):
         """Function called each time a new ros Image message is received on
@@ -76,9 +101,16 @@ class IBVS:
         
         # Convert the ROS Image into the OpenCV format
         image = self.bridge.imgmsg_to_cv2(msg, desired_encoding="bgr8")
+        
+        # cv2.imshow(str(self.i), image)
+        # cv2.waitKey()
+        # self.i += 1
 
         # Find the Harris' corners on the first frame
         if self.is_first_image:
+            # cv2.imshow("First", image)
+            # cv2.waitKey()
+            
             image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             
             self.target_points, points = sift.detect_and_match(
@@ -103,23 +135,16 @@ class IBVS:
             velocity = vc.velocity_command(self.L, points, self.old_points, self.target_points, dt)
             
             twist = TwistStamped()
-            
-            # twist.twist.linear.x = 0
-            # twist.twist.linear.y = 0
-            # twist.twist.linear.z = 0
-            # twist.twist.angular.z = 0.2
             twist.twist.linear.x = velocity[0]
             twist.twist.linear.y = -velocity[1]
             twist.twist.linear.z = -velocity[2]
             twist.twist.angular.z = -velocity[3]
             
-            # print(twist)
+            self.pub_velocity.publish(twist)           
             
-            error_norm = np.linalg.norm(points - self.target_points)
-            print(f"The norm of the error is {error_norm} pixels"
-                  "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
-            
-            self.pub_velocity.publish(twist)
+            self.error_norm = np.linalg.norm(points - self.target_points)
+            # print(f"The norm of the error is {self.error_norm} pixels"
+            #       "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
             
         # Update old image and points
         self.old_image = image
@@ -135,39 +160,19 @@ class IBVS:
         image_to_display = dw.draw_points(image_to_display, self.target_points,
                                           color=(0, 255, 0))
         
-        # cv2.imwrite("image_drone.png", image_to_display)
-        
-        # imagebis = cv2.imread("/media/tom/Shared/Stage-EN-2022/quadcopter_landing_ws/src/drone/drone_control/visual_servo_control/target_image_1475_wall.png")
-        # imagebis = dw.draw_points(imagebis, self.target_points,
-        #                           color=(0, 255, 0))
-        # cv2.imwrite("imagebis.png", imagebis)
-        
         # Display the image
         dw.show_image(image_to_display)
         
-    def callback_depth(self, msg):
-        """Function called each time a new ROS Image is received on
-        the camera1/image_raw_depth topic
-        Args:
-            msg (sensor_msgs/Image): a ROS depth image sent by the camera
-        """
-        # Convert the ROS Image into the OpenCV format
-        # They are encoded as 32-bit float (32UC1) and each pixel is a depth
-        # along the camera Z axis in meters
-        # self.dstamp = msg.header.stamp
-        self.depth_image = self.bridge.imgmsg_to_cv2(
-            msg, desired_encoding="passthrough")
-
  
 # Main program
 # The "__main__" flag acts as a shield to avoid these lines to be executed if
 # this file is imported in another one
 if __name__ == "__main__":
     # Declare the node
-    rospy.init_node("IBVS")
+    rospy.init_node("IBVSbis")
 
     # Instantiate an object
-    IBVS = IBVS()
+    IBVS = IBVSbis()
 
     # Run the node until Ctrl + C is pressed
     rospy.spin()
