@@ -121,7 +121,7 @@ class PoseEstimation:
             # The optical flow might have not been found for some points
             # we need to update old_points to compute the difference between
             # the current points and these
-            points, self.old_points = of.points_next_position_lk(image,
+            points, self.old_points, _ = of.points_next_position_lk(image,
                                                               self.old_image,
                                                               self.old_points)
 

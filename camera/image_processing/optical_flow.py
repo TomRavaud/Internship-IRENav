@@ -37,7 +37,7 @@ def points_next_position_lk(image, old_image, old_points):
     old_points = np.float32(old_points)
 
     # Compute optical flow using Lucas-Kanade method
-    points, status, err = cv2.calcOpticalFlowPyrLK(old_gray,
+    points, status, _ = cv2.calcOpticalFlowPyrLK(old_gray,
                                                    gray,
                                                    old_points, None,
                                                    **lk_params)
@@ -48,7 +48,7 @@ def points_next_position_lk(image, old_image, old_points):
     good_points = points[status == 1]
     good_old_points = old_points[status == 1]
 
-    return good_points, good_old_points
+    return good_points, good_old_points, status
 
 def sparse_displacement(old_points, points):
     """Compute the displacement of some points

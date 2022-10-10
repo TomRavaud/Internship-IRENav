@@ -16,7 +16,7 @@ import cv2
 from image_processing import drawing as dw
 
 
-class PoseEstimation:
+class CameraView:
     def __init__(self):
         """Constructor of the class
         """
@@ -36,14 +36,11 @@ class PoseEstimation:
         """
         # Convert the ROS Image into the OpenCV format
         image = self.bridge.imgmsg_to_cv2(msg, desired_encoding="bgr8")
-
-        # Draw the platform axes on the image
-        image_to_display = np.copy(image)
         
-        # cv2.imwrite("image.png", image_to_display)
-            
+        # cv2.imwrite("image.png", image)
+
         # Display the image
-        dw.show_image(image_to_display)
+        dw.show_image(image)
         
 # Main program
 # The "__main__" flag acts as a shield to avoid these lines to be executed if
@@ -53,7 +50,7 @@ if __name__ == "__main__":
     rospy.init_node("camera_view")
 
     # Instantiate an object
-    pose_estimation = PoseEstimation()
+    camera_view = CameraView()
 
     # Run the node until Ctrl + C is pressed
     rospy.spin()

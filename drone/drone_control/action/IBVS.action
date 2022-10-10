@@ -1,9 +1,11 @@
 # The goal, to be sent by the client
+# The target image you want the drone camera view matches with
 sensor_msgs/Image target_image
 ---
 # The result, to be sent by the server upon completion
-bool is_stabilized
+bool is_drone_stabilized
 ---
 # The feedback, to be sent periodically by the server during execution
-float32 drone_linear_velocity
-float32 drone_yaw_velocity
+# float32 drone_linear_velocity
+# float32 drone_yaw_velocity
+float32 error

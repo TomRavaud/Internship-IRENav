@@ -1,0 +1,10 @@
+# The goal, to be sent by the client
+string mode
+---
+# The result, to be sent by the server upon completion
+bool is_ready_to_land
+---
+# The feedback, to be sent periodically by the server during execution
+# The angle between drone and platform's normal vectors
+float32 drone_platform_angle
+float32 IBVS_error

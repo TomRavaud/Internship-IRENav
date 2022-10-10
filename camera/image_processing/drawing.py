@@ -2,14 +2,14 @@ import cv2
 import numpy as np
 
 
-def show_image(image):
+def show_image(image, window_name="Preview"):
     """Display a given image
 
     Args:
         image (cv::Mat): a basic OpenCV image
     """
     # Display the image in a window
-    cv2.imshow("Preview", image)
+    cv2.imshow(window_name, image)
     
     # Wait for 3 ms (for a key press) before automatically destroying
     # the current window

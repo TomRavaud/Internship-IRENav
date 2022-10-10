@@ -1,8 +1,8 @@
 import cv2
 
 # print(cv2.__version__)
-im1 = cv2.imread("/media/tom/Shared/Stage-EN-2022/quadcopter_landing_ws/src/drone/drone_control/visual_servo_control/target_image_1475.png", flags=cv2.IMREAD_GRAYSCALE)
-im2 = cv2.imread("/media/tom/Shared/Stage-EN-2022/quadcopter_landing_ws/src/drone/drone_control/visual_servo_control/drone_image_scale_rotation.png", cv2.IMREAD_GRAYSCALE)
+im1 = cv2.imread("/media/tom/Shared/Stage-EN-2022/quadcopter_landing_ws/src/drone/drone_control/visual_servo_control/Images/target_image_1475.png", flags=cv2.IMREAD_GRAYSCALE)
+im2 = cv2.imread("/media/tom/Shared/Stage-EN-2022/quadcopter_landing_ws/src/drone/drone_control/visual_servo_control/Images/drone_image_scale_rotation.png", cv2.IMREAD_GRAYSCALE)
 
 # Initialize SIFT detector
 sift = cv2.SIFT_create()

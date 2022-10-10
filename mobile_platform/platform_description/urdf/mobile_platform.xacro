@@ -40,7 +40,7 @@
             <origin xyz="${origin}"/>
             <axis xyz="${axis}"/>
             <limit upper="1.57" lower="-1.57" effort="500" velocity="10"/>
-            <dynamics damping="0.1" friction="100"/>
+            <dynamics damping="0.1" friction="0.1"/>
         </joint>
     </xacro:macro>
 
@@ -52,7 +52,7 @@
             <origin xyz="${origin}"/>
             <axis xyz="${axis}"/>
             <limit upper="3.0" lower="-3.0" effort="500" velocity="10"/>
-            <dynamics damping="0.1" friction="100"/>
+            <dynamics damping="0.1" friction="0.1"/>
         </joint>
     </xacro:macro>
 
