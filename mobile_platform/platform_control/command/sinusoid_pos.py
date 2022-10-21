@@ -56,13 +56,13 @@ if __name__ == "__main__":
     position_tz = Float64()
 
     # Set the amplitude (radians) and the frequency (Hz) of the sinusoid
-    A = 20*np.pi/180
-    f_roll = 0.1
+    A = 10*np.pi/180
+    f_roll = 0.05
     f_pitch = 0.025
     f_yaw = 0.05
-    f_tx = 0.1
-    f_ty = 0.2
-    f_tz = 0.1
+    f_tx = 0.025
+    f_ty = 0.025
+    f_tz = 0.05
     
     # Get the current time to start the sinusoid at 0
     time = rospy.get_time()

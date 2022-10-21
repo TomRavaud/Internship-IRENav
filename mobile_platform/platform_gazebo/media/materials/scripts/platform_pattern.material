@@ -5,7 +5,7 @@ material PlatformPattern{
         {
             texture_unit
             {
-                texture ../textures/texture_wall_cropped_and_resized.jpg
+                texture ../textures/texture_wall.jpg
                 scale 1 1
             }
         } 

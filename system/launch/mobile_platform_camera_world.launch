@@ -19,7 +19,7 @@
         <param name="robot_description" command="$(find xacro)/xacro '$(find platform_description)/urdf/mobile_platform.xacro'"/>
         <param name="tf_prefix" value="mobile_platform"/>
 
-        <include file="$(find platform_gazebo)/launch/mobile_platform.launch" >
+        <include file="$(find platform_gazebo)/launch/mobile_platform.launch">
             <!-- <arg name="init_pose" value="-x 0 -y 0 -z 1" /> -->
             <arg name="init_pose" value="-x 0 -y 0 -z 0" />
         </include>

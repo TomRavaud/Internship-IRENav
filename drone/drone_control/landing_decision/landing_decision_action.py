@@ -67,13 +67,12 @@ class LandingDecision:
             
             # writer.writerow(header)
             
-            L_roll = []
+            # L_roll = []
             
-            # while not is_ready_to_land:
-            for i in range(1000):
+            while not is_ready_to_land:
+            # for i in range(1000):
                 # print(f"IBVS error : {self.IBVS_error}")
                 is_stabilized = self.IBVS_error <= 30.
-                # L_error.append(self.IBVS_error)
                 
                 # print(f"Transform matrix : {self.camera_platform_transform}")
                 # theta = cv2.Rodrigues(self.camera_platform_transform[:3, :3])[0]
@@ -90,8 +89,7 @@ class LandingDecision:
                 # Pitch and roll angles as a single one
                 drone_platform_angle = np.linalg.norm(theta_error[:2])
                 
-                # writer.writerow([i, drone_platform_angle])
-                L_roll.append(theta_error[0])
+                # L_roll.append(theta_error[0])
                 
                 # print(self.camera_platform_transform[:3, :3])
                 # print(drone_platform_angle)
@@ -110,19 +108,17 @@ class LandingDecision:
                 
                 rospy.Rate(10).sleep()
                 
-            # file.close()
-            columns = ["Angle"]
-            dataframe = pd.DataFrame(L_roll, columns=columns)
-            dataframe.to_csv("record_drone_platform_angle.csv")
+            # columns = ["Angle"]
+            # dataframe = pd.DataFrame(L_roll, columns=columns)
+            # dataframe.to_csv("record_drone_platform_angle.csv")
             
-            # plt.figure()
-            # plt.plot(range(200), L_error)
-            # plt.show()
-                
             decision_result = DecisionResult()
             decision_result.is_ready_to_land = True
             self.decision_server.set_succeeded(decision_result)
         
+        if goal == "predictive":
+            print("predictive")
+            
     def callback_pose(self, msg):
         self.camera_platform_transform = conversions.tf_to_transform_matrix(msg.transform)        
         

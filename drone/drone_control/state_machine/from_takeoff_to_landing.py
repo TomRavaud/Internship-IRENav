@@ -111,37 +111,37 @@ if __name__ == "__main__":
         mode_guided = SetModeRequest()
         mode_guided.custom_mode = "GUIDED"
         
-        # StateMachine.add("MODE_GUIDED", ServiceState("/mavros/set_mode",
-        #                                              SetMode,
-        #                                              request=mode_guided),
-        #                 transitions={"succeeded":"ARMING",
-        #                              "aborted":"aborted_sm",
-        #                              "preempted":"preempted_sm"})
+        StateMachine.add("MODE_GUIDED", ServiceState("/mavros/set_mode",
+                                                     SetMode,
+                                                     request=mode_guided),
+                        transitions={"succeeded":"ARMING",
+                                     "aborted":"aborted_sm",
+                                     "preempted":"preempted_sm"})
         
         ### Service state : ARMING ###
         arming = CommandBoolRequest()
         arming.value = True
         
-        # StateMachine.add("ARMING",
-        #                  ServiceState("mavros/cmd/arming",
-        #                               CommandBool,
-        #                               request=arming),
-        #                 transitions={"succeeded":"TAKEOFF",
-        #                              "aborted":"aborted_sm",
-        #                              "preempted":"preempted_sm"})
+        StateMachine.add("ARMING",
+                         ServiceState("mavros/cmd/arming",
+                                      CommandBool,
+                                      request=arming),
+                        transitions={"succeeded":"TAKEOFF",
+                                     "aborted":"aborted_sm",
+                                     "preempted":"preempted_sm"})
         
         ### Service state : TAKEOFF ###
         TAKEOFF_ALTITUDE = 4
         takeoff = CommandTOLRequest()
         takeoff.altitude = TAKEOFF_ALTITUDE
         
-        # StateMachine.add("TAKEOFF",
-        #                  ServiceState("mavros/cmd/takeoff",
-        #                               CommandTOL,
-        #                               request=takeoff),
-        #                  transitions={"succeeded":"WAITING",
-        #                               "aborted":"aborted_sm",
-        #                               "preempted":"preempted_sm"})
+        StateMachine.add("TAKEOFF",
+                         ServiceState("mavros/cmd/takeoff",
+                                      CommandTOL,
+                                      request=takeoff),
+                         transitions={"succeeded":"WAITING",
+                                      "aborted":"aborted_sm",
+                                      "preempted":"preempted_sm"})
         
         ### State : WAITING (for the take-off to finish) ###
         WAITING_TIME = 10
@@ -214,11 +214,15 @@ if __name__ == "__main__":
         #                  transitions={"succeeded":"succeeded_sm",
         #                               "aborted":"aborted_sm",
         #                               "preempted":"preempted_sm"})
-        
+    
+    # Instantiate an introspection server which allows us to display
+    # the state machine structure and helps us to debug it
     sis = IntrospectionServer("sis", from_takeoff_to_landing,
                               "/FROM_TAKEOFF_TO_LANDING")
+    
     sis.start()
-        
+    
+    # Execute the main state machine
     from_takeoff_to_landing.execute()
     
     sis.stop()
