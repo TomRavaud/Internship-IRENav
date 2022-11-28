@@ -19,6 +19,11 @@
       <ambient>0.8 0.8 0.8 1.0</ambient>
       <!-- Remove shadows -->
       <shadows>0</shadows>
+      <!-- <sky>
+        <clouds>
+          <speed>12</speed>
+        </clouds>
+      </sky> -->
     </scene>
 
     </world>

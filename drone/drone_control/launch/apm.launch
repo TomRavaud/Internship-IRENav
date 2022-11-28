@@ -7,7 +7,7 @@
 	<arg name="log_output" default="screen" />
 	<arg name="respawn_mavros" default="true"/>
 	<arg name="mavros_ns" default="/"/>
-	<arg name="config_yaml" default="$(find mavros)/launch/apm_config.yaml" />
+	<arg name="config_yaml" default="$(find drone_control)/launch/my_apm_config.yaml" />
 
 	<include file="$(find drone_control)/launch/mavros_node.launch">
 		<arg name="pluginlists_yaml" value="$(find mavros)/launch/apm_pluginlists.yaml" />

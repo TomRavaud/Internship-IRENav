@@ -11,11 +11,14 @@ find_package(catkin REQUIRED COMPONENTS
   mavlink
   mavros
   rospy
+  roscpp
   actionlib_msgs
+  cv_bridge
 )
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
+# find_package(OpenCV REQUIRED)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -64,7 +67,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate actions in the 'action' folder
 add_action_files(
   DIRECTORY action
-  FILES IBVS.action Decision.action PoseEstimation.action
+  FILES IBVS.action Decision.action
 )
 
 ## Generate added messages and services with any dependencies listed here
@@ -136,7 +139,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/drone_control_node.cpp)
+# add_executable(pose_estimation_aruco pose_estimation/pose_estimation_aruco.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -149,8 +152,9 @@ include_directories(
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(${PROJECT_NAME}_node
+# target_link_libraries(pose_estimation_aruco
 #   ${catkin_LIBRARIES}
+#   ${OpenCV_LIBS}
 # )
 
 #############

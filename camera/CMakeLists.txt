@@ -7,11 +7,19 @@ project(camera)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED)
+find_package(catkin REQUIRED
+    rospy
+    roscpp
+    std_msgs
+    message_generation
+    actionlib_msgs
+    cv_bridge
+    sensor_msgs
+)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
-
+# find_package(OpenCV REQUIRED)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -43,11 +51,10 @@ catkin_python_setup()
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
+add_message_files(
+  FILES
+  Correspondences.msg
+)
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -57,17 +64,19 @@ catkin_python_setup()
 # )
 
 ## Generate actions in the 'action' folder
-# add_action_files(
-#   FILES
-#   Action1.action
-#   Action2.action
-# )
+add_action_files(
+  DIRECTORY action
+  FILES Aruco.action TemplateTracking.action PoseEstimation.action
+)
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs  # Or other packages containing msgs
-# )
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+  sensor_msgs
+  actionlib_msgs
+  geometry_msgs
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -101,7 +110,7 @@ catkin_python_setup()
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES camera
-#  CATKIN_DEPENDS other_catkin_pkg
+ CATKIN_DEPENDS actionlib_msgs
 #  DEPENDS system_lib
 )
 
@@ -113,7 +122,7 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(
 # include
-# ${catkin_INCLUDE_DIRS}
+${catkin_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -130,6 +139,7 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/camera_node.cpp)
+add_executable(pose_estimation_aruco src/pose_estimation/pose_estimation_aruco.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -145,6 +155,10 @@ include_directories(
 # target_link_libraries(${PROJECT_NAME}_node
 #   ${catkin_LIBRARIES}
 # )
+target_link_libraries(pose_estimation_aruco
+  ${catkin_LIBRARIES}
+  ${OpenCV_LIBS}
+)
 
 #############
 ## Install ##

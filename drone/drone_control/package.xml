@@ -52,12 +52,15 @@
   <build_depend>mavlink</build_depend>
   <build_depend>mavros</build_depend>
   <build_depend>rospy</build_depend>
+  <build_depend>roscpp</build_depend>
   <build_export_depend>mavlink</build_export_depend>
   <build_export_depend>mavros</build_export_depend>
   <build_export_depend>rospy</build_export_depend>
+  <build_export_depend>roscpp</build_export_depend>
   <exec_depend>mavlink</exec_depend>
   <exec_depend>mavros</exec_depend>
   <exec_depend>rospy</exec_depend>
+  <exec_depend>roscpp</exec_depend>
   <build_depend>actionlib_msgs</build_depend>
   <exec_depend>actionlib_msgs</exec_depend>
 
