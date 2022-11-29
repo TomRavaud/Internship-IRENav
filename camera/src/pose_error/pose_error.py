@@ -11,7 +11,7 @@ import cv2
 from geometry_msgs.msg import TransformStamped
 
 # My modules
-import error_function as ef
+from image_utils import error_function as ef, conversions
 
 class PoseError:
     def __init__(self):
@@ -50,10 +50,10 @@ class PoseError:
         """
         if self.transform_true is not None:
             # Convert the true transform to a numpy array
-            HTM1 = ef.tf_to_transform_matrix(self.transform_true.transform)
+            HTM1 = conversions.tf_to_transform_matrix(self.transform_true.transform)
         
             # Convert the transform estimate to a numpy array
-            HTM2 = ef.tf_to_transform_matrix(msg.transform)
+            HTM2 = conversions.tf_to_transform_matrix(msg.transform)
         
             # Compute errors on translation and rotation between the true value
             # and the estimated one

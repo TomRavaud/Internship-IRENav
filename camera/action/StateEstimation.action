@@ -1,0 +1,8 @@
+# The goal, to be sent by the client
+bool estimating_state
+---
+# The result, to be sent by the server upon completion
+bool is_finished
+---
+# The feedback, to be sent periodically by the server during execution
+geometry_msgs/TransformStamped transform

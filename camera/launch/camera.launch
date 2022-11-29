@@ -23,4 +23,10 @@
     <!-- Publish the true transform between the camera and the platform's frames -->
     <node name="pose_listener_publisher" type="pose_true_publisher.py" pkg="camera"/>
 
+    <!-- Publish the transform between the world and the camera frames -->
+    <node name="world_camera_transform_publisher" type="world_camera_transform_publisher.py" pkg="camera"/>
+
+    <!-- Publish the transform between the world and the platform frames -->
+    <node name="world_platform_transform_publisher" type="world_platform_transform_publisher.py" pkg="camera"/>
+
 </launch>

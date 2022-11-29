@@ -76,15 +76,18 @@ class PoseEstimation:
                 
         while not self.pose_estimation_server.is_preempt_requested():
             
-            # Get the current image for visualization purpose
+            # Get the current image for visualization purpose only
             image = self.image
-            # time = self.time
+            
+            # Get the 2D-3D correspondences
+            coordinates_2d = self.coordinates_2d
+            coordinates_3d = self.coordinates_3d
             
             
             # Solve the P-n-P problem (with RANSAC), ie find the transform
             # between the camera's frame and the platform's frame
-            _, theta, T = cv2.solvePnP(self.coordinates_3d,
-                                       self.coordinates_2d, self.K,
+            _, theta, T = cv2.solvePnP(coordinates_3d,
+                                       coordinates_2d, self.K,
                                        np.zeros((4, 1)),
                                        flags=0)
             
@@ -114,17 +117,13 @@ class PoseEstimation:
             axes_points_image = sf.camera_frame_to_image(axes_points_camera,
                                                          self.K)
             
-            #TODO: Display the pose estimation result on the image
-            # print(f"Time image : {time}")
-            # print(f"Time points : {time_points}")
-            # print("")
+            # Display the pose estimation result on the image
             image_to_display = np.copy(image)
+            # Draw key-points on the image
+            image_to_display = dw.draw_points(image_to_display, coordinates_2d, color=(255, 0, 255))
             # Draw the platform axes on the image
             image_to_display = dw.draw_axes(image_to_display,
                                             axes_points_image)
-            # Draw key-points on the image
-            image_to_display = dw.draw_points(image_to_display, self.coordinates_2d)
-
             # Display the image
             dw.show_image(image_to_display, "Pose estimation")
             

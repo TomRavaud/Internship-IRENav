@@ -12,7 +12,7 @@ from camera.msg import PoseEstimationAction, PoseEstimationGoal
 # Initialize the node
 rospy.init_node("pose_estimation_action_client")
 
-# Initialize the template tracking action client
+# Initialize the pose estimation action client
 pose_estimation_client = actionlib.SimpleActionClient(
     "PoseEstimation", PoseEstimationAction)
 
