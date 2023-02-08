@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def compute_interaction_matrix(old_points, K):
     # TODO:  doc
     

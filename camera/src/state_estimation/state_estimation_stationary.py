@@ -100,9 +100,11 @@ class StateEstimation:
                           theta[0, 0], theta[1, 0], theta[2, 0], 0, 0, 0, 0, 0, 0])
             y = y[:, None]
             
-            
-            # State estimation
-            x_pred = kalman_stationary(x_pred, y, self.C, 0, self.A, self.K)
+            if self.counter < 500:
+                # State estimation
+                x_pred = kalman_stationary(x_pred, y, self.C, 0, self.A, self.K)
+            else:
+                x_pred = np.dot(self.A, x_pred)
             
             # Get the prediction of the transform between the world and the platform
             T_wp_pred = x_pred[:3, 0]
@@ -126,11 +128,13 @@ class StateEstimation:
                 self.T[self.counter, 0] = rospy.get_time()
                 
                 # Get errors on translation and rotation
-                self.T[self.counter, 1] = round(error_translation, 4)
-                self.T[self.counter, 2] = round(error_translation_kalman, 4)
+                # self.T[self.counter, 1] = round(error_translation, 4)
+                # self.T[self.counter, 2] = round(error_translation_kalman, 4)
+                self.T[self.counter, 1] = np.linalg.norm(HTM_wp_true[:3, -1])
+                self.T[self.counter, 2] = np.linalg.norm(HTM_wp_estimated[:3, -1])
                 
                 # Get true translation and rotation
-                # self.T[self.counter, 3] = np.linalg.norm(HTM_wp[:3, -1])
+                self.T[self.counter, 3] = np.linalg.norm(HTM_wp_pred[:3, -1])
                 # self.T[self.counter, 4] = np.linalg.norm(cv2.Rodrigues(HTM1[:3, :3])[0])
             
             if self.counter == 1000:

@@ -31,9 +31,9 @@
     </gazebo>
 
     <!-- Add texture/colors to links -->
-    <gazebo reference="board_link">
+    <!-- <gazebo reference="board_link">
         <material>PlatformPattern</material>
-    </gazebo>
+    </gazebo> -->
 
     <!-- ros_control model plugin -->
     <gazebo>

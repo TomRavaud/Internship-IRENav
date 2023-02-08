@@ -120,7 +120,7 @@ class PoseEstimation:
             # Display the pose estimation result on the image
             image_to_display = np.copy(image)
             # Draw key-points on the image
-            image_to_display = dw.draw_points(image_to_display, coordinates_2d, color=(255, 0, 255))
+            # image_to_display = dw.draw_points(image_to_display, coordinates_2d, color=(255, 0, 255))
             # Draw the platform axes on the image
             image_to_display = dw.draw_axes(image_to_display,
                                             axes_points_image)

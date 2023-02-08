@@ -1,8 +1,10 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+plt.rcParams['text.usetex'] = True  # Render Matplotlib text with Tex
 
-data = pd.read_csv("/media/tom/Shared/Stage-EN-2022/quadcopter_landing_ws/src/drone/drone_control/landing_decision/record_drone_platform_roll_20_01.csv",
+
+data = pd.read_csv("./drone/drone_control/src/landing_decision/record_drone_platform_roll_20_01.csv",
                    sep=",",
                    decimal=".",
                    index_col=0)
@@ -37,21 +39,23 @@ for i in range(100, 200):
     s_predict_quadratic = np.dot(quadratic_motion_matrix_1D_shifted, s_3)
     angle_predict_quadratic.append(s_predict_quadratic[0])
 
-plt.figure()
-plt.title("Predicted roll angle")
+plt.figure(figsize=(6, 4))
 
-plt.subplot("121")
-plt.plot(drone_platform_angle[100+n_step : 200+n_step], "ro")
-plt.plot(range(100 + n_step, 200 + n_step), angle_predict_linear, "bo")
-plt.title("Linear motion")
+# plt.subplot("121")
+plt.plot(drone_platform_angle[100+n_step : 200+n_step], "r-", label="True")
+plt.plot(range(100 + n_step, 200 + n_step), angle_predict_linear, "b+", label="Linear motion")
+plt.plot(range(100 + n_step, 200 + n_step), angle_predict_quadratic, "g+", label="Quadratic motion")
+
+plt.title("Platform roll prediction")
 plt.xlabel("Timestamp")
 plt.ylabel("Roll angle (rad)")
+plt.legend()
 
-plt.subplot("122")
-plt.plot(drone_platform_angle[100+n_step : 200+n_step], "ro")
-plt.plot(range(100 + n_step, 200 + n_step), angle_predict_quadratic, "bo")
-plt.title("Quadratic motion")
-plt.xlabel("Timestamp")
-plt.ylabel("Roll angle (rad)")
+# plt.subplot("122")
+# plt.plot(drone_platform_angle[100+n_step : 200+n_step], "r-")
+# plt.plot(range(100 + n_step, 200 + n_step), angle_predict_quadratic, "g+")
+# plt.title("Quadratic motion")
+# plt.xlabel("Timestamp")
+# plt.ylabel("Roll angle (rad)")
 
 plt.show()

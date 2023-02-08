@@ -1,8 +1,10 @@
 import cv2
 
 # print(cv2.__version__)
-im1 = cv2.imread("./drone/drone_control/visual_servo_control/Images/target_image_1475.png", flags=cv2.IMREAD_GRAYSCALE)
-im2 = cv2.imread("./drone/drone_control/visual_servo_control/Images/drone_image_scale_rotation.png", cv2.IMREAD_GRAYSCALE)
+im1 = cv2.imread("./camera/src/correspondences_2d3d/Images/template_resized.png", flags=cv2.IMREAD_GRAYSCALE)
+im2 = cv2.imread("./camera/src/correspondences_2d3d/Images/reference_image.png", flags=cv2.IMREAD_GRAYSCALE)
+# im1 = cv2.imread("./drone/drone_control/visual_servo_control/Images/target_image_1475.png", flags=cv2.IMREAD_GRAYSCALE)
+# im2 = cv2.imread("./drone/drone_control/visual_servo_control/Images/drone_image_scale_rotation.png", cv2.IMREAD_GRAYSCALE)
 
 # Initialize SIFT detector
 sift = cv2.SIFT_create()
@@ -23,10 +25,10 @@ matches = sorted(matches, key = lambda x:x.distance)
 # print(kp1[0].pt)
 
 # Draw matches
-im_matches = cv2.drawMatches(im1, kp1, im2, kp2, matches[:10], None, flags=
+im_matches = cv2.drawMatches(im1, kp1, im2, kp2, matches[:20], None, flags=
                              cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
 
-# cv2.imwrite("keypoints_matching.png", im_matches)
+# cv2.imwrite("sift_matching_template.png", im_matches)
 
 # print(kp1)
 # print(cv2.KeyPoint.convert(kp1))

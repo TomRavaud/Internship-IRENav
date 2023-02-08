@@ -4,6 +4,9 @@ This repository contains the source code for the application I worked on during 
 
 <!-- ## TL;DR
 
+Quick start
+
+
 Here I detail the procedure for installing and running the project quickly. I worked with ROS noetic and Gazebo 11 on Ubuntu 20.04, and coded the nodes mainly in Python3, but for a quick start you just need to have Docker installed, I take care of the rest.
 
 1. Clone [this](https://) repository to get the files which will help us work with Docker. Or simply execute the following command : 

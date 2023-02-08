@@ -10,15 +10,15 @@
     </include>
 
     <!--A global light source-->
-    <!-- <include>
+    <include>
       <uri>model://sun</uri>
-    </include> -->
+    </include>
 
     <scene>
       <!-- Replace the light source (sun) by am ambient light -->
-      <ambient>0.8 0.8 0.8 1.0</ambient>
+      <!-- <ambient>0.8 0.8 0.8 1.0</ambient> -->
       <!-- Remove shadows -->
-      <shadows>0</shadows>
+      <!-- <shadows>0</shadows> -->
       <!-- <sky>
         <clouds>
           <speed>12</speed>

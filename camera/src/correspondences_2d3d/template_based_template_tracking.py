@@ -173,6 +173,7 @@ class TBTT:
             # Convert the current image to grayscale
             image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             
+            # start = time.time()
             
             for l in range(NB_LEVEL):
                 # Get the pre-computed matrix associated with the current level
@@ -200,12 +201,15 @@ class TBTT:
 
                     # Update the grid
                     X_grid, Y_grid = grid_homography(X_grid0, Y_grid0, F)
-                    
+            
+            # stop = time.time()
+            
+            # print(stop-start)
             
             # Display the image
-            # image_to_display = np.copy(image)
-            # dw.draw_quadrilateral(image_to_display, mu[:,::-1])
-            # dw.show_image(image_to_display, "Template tracking")
+            image_to_display = np.copy(image)
+            dw.draw_quadrilateral(image_to_display, mu[:,::-1])
+            dw.show_image(image_to_display, "Template tracking")
             
             
             # Set a 30Hz frequency

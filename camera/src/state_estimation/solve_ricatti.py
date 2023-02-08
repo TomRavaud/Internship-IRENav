@@ -2,7 +2,7 @@ import numpy as np
 
 
 # Set a constant time step
-dt = 0.1
+dt = 0.1  # It depends on the execution rate of the state estimation node
 
 # Compute the (constant) evolution matrix A
 A = np.zeros((36, 36))

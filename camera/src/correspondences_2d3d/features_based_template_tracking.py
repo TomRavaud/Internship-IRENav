@@ -17,6 +17,7 @@ from camera.msg import TemplateTrackingAction, TemplateTrackingResult,\
 # Python librairies
 import numpy as np
 import cv2
+import time
 
 # My modules
 from image_utils import optical_flow as of, drawing as dw,\
@@ -156,6 +157,8 @@ class FBTT:
             # Get the current image
             image = self.image
             
+            # start = time.time()
+            
             # The displacement might have not been found for some points
             # we need to update old_points to compute the difference between
             # the current points and these
@@ -176,6 +179,10 @@ class FBTT:
                 # Keep only template points corresponding to points still
                 # currently tracked
                 TEMPLATE_POINTS_3D = TEMPLATE_POINTS_3D[status[:, 0] == 1]
+                
+            # stop = time.time()
+            
+            # print(stop - start)
                 
             
             # Publish the computed correspondences
